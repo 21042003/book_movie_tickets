@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
@@ -23,7 +24,7 @@ class MovieService {
     throw Exception('Failed to load genres');
   }
 
-  /// Ham dung chung de lay danh sach phim theo Type
+  /// Ham dung chung de lay danh sach phim theo Type và lấy kèm Runtime
   Future<List<MovieModel>> fetchMovies(
     String type,
     Map<int, GenresModel> genreMap,
@@ -34,16 +35,25 @@ class MovieService {
 
     if (response.statusCode == 200) {
       final List results = json.decode(response.body)['results'];
-      return results.map((m) {
-        final genreIds = List<int>.from(m['genre_ids'] ?? []);
-        final movieGenres = genreIds
-            .map((id) => genreMap[id] ?? GenresModel(id: 0, name: 'null'))
-            .toList();
-        m['genres'] = movieGenres.map((g) => g.toJson()).toList();
-        return MovieModel.fromJson(m);
-      }).toList();
+      
+      final List<int> movieIds = results.map((m) => m['id'] as int).toList();
+
+      // Sử dụng Future.wait nhưng bọc try-catch cho từng phim để tránh crash cả list
+      final List<MovieModel?> detailedMovies = await Future.wait(
+        movieIds.map((id) async {
+          try {
+            return await fetchMovieDetail(id);
+          } catch (e) {
+            debugPrint('Error fetching movie detail for ID $id: $e');
+            return null; // Trả về null nếu phim này bị lỗi dữ liệu
+          }
+        })
+      );
+
+      // Lọc bỏ các phim bị null (lỗi)
+      return detailedMovies.whereType<MovieModel>().toList();
     }
-    throw Exception('Failed to load genres');
+    throw Exception('Failed to load movies');
   }
 
   Future<MovieModel> fetchMovieDetail(int movieId) async {
