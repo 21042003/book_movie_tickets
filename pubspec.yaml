@@ -42,6 +42,7 @@ dependencies:
   provider: ^6.1.5+1
 
   http: ^1.2.0
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
@@ -55,7 +56,13 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   riverpod_generator: ^2.6.5
   build_runner: ^2.5.4
+  flutter_launcher_icons: ^0.13.1 # Kiểm tra phiên bản mới nhất trên pub.dev
 
+flutter_launcher_icons:
+  android: true
+  image_path: "assets/icons/logo-cinema.png" # Đường dẫn đến file logo của bạn
+  adaptive_icon_background: "#FFFFFF" # (Tùy chọn cho Android) Màu nền
+  adaptive_icon_foreground: "assets/icons/logo-cinema.png"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

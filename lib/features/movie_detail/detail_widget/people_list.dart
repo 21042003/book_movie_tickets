@@ -21,7 +21,7 @@ class PeopleList extends StatelessWidget {
               SizedBox(width: 8),
               Expanded(
                 child: Text('Robert Downey Jr.', style: TextStyle(color: Colors.white, fontSize: 12), maxLines: 2),
-              )
+              ),
             ],
           ),
         ),

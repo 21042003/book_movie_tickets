@@ -1,7 +1,9 @@
+import 'package:book_movie_tickets/features/home/screens/see_all_movies_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/see_all_click.dart';
+import '../controllers/see_all_movies_controller.dart';
 import '../models/movie_model.dart';
 import '../widgets/coming_soon_section.dart';
 import '../widgets/home_header.dart';
@@ -42,12 +44,35 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             const SizedBox(height: 24.0),
-            SeeAllClick(title: "Now playing", onTap: () {}),
+            SeeAllClick(
+              title: "Now playing",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SeeAllMoviesScreen(
+                      initialCategory: MovieCategoryType.nowPlaying,
+                    ),
+                  ),
+                );
+              },
+            ),
             const SizedBox(height: 24.0),
-            MovieCard(),
-            // Trong ListView ở Home
+            const MovieCard(),
             const SizedBox(height: 24.0),
-            SeeAllClick(title: "Coming soon", onTap: () {}),
+            SeeAllClick(
+              title: "Coming soon",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SeeAllMoviesScreen(
+                      initialCategory: MovieCategoryType.comingSoon,
+                    ),
+                  ),
+                );
+              },
+            ),
             const SizedBox(height: 24.0),
             ComingSoonList(),
             const SizedBox(height: 24.0),

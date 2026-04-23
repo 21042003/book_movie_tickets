@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 
 class ContinueButton extends StatelessWidget {
-  const ContinueButton({super.key});
+  final VoidCallback onTap;
+  const ContinueButton({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +12,7 @@ class ContinueButton extends StatelessWidget {
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: onTap,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.hexFCC434,
           shape: RoundedRectangleBorder(
