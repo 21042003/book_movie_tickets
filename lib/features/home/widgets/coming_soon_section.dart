@@ -89,7 +89,7 @@ class ComingSoonSection extends StatelessWidget {
                       const SizedBox(width: 5),
                       Expanded(
                         child: Text(
-                          movies.releaseDate,
+                          _formatDate(movies.releaseDate),
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
@@ -107,6 +107,16 @@ class ComingSoonSection extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _formatDate(String dateStr) {
+    if (dateStr.isEmpty) return 'TBA';
+    try {
+      final date = DateTime.parse(dateStr);
+      return "${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}";
+    } catch (e) {
+      return dateStr;
+    }
   }
 }
 

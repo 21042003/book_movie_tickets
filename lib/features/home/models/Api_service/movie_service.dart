@@ -27,10 +27,11 @@ class MovieService {
   /// Ham dung chung de lay danh sach phim theo Type và lấy kèm Runtime
   Future<List<MovieModel>> fetchMovies(
     String type,
-    Map<int, GenresModel> genreMap,
-  ) async {
+    Map<int, GenresModel> genreMap, {
+    int page = 1,
+  }) async {
     final response = await http.get(
-      Uri.parse('$_baseUrl/movie/$type?api_key=$_apiKey&language=vi-VN'),
+      Uri.parse('$_baseUrl/movie/$type?api_key=$_apiKey&language=vi-VN&page=$page'),
     );
 
     if (response.statusCode == 200) {
@@ -98,12 +99,40 @@ final genreMapProvider = FutureProvider<Map<int, GenresModel>>((ref) async {
 ///Lay danh sach phim pho bien
 final popularMoviesProvider = FutureProvider<List<MovieModel>>((ref) async {
   final genreMap = await ref.watch(genreMapProvider.future);
-  return ref.watch(movieServiceProvider).fetchMovies('popular', genreMap);
+  final movieService = ref.watch(movieServiceProvider);
+  // Lấy 2 trang để dữ liệu phong phú
+  final results = await Future.wait([
+    movieService.fetchMovies('now_playing', genreMap, page: 1),
+    movieService.fetchMovies('now_playing', genreMap, page: 2),
+  ]);
+  return results.expand((list) => list).toList();
 });
 
 final upcomingMoviesProvider = FutureProvider<List<MovieModel>>((ref) async {
   final genreMap = await ref.watch(genreMapProvider.future);
-  return ref.watch(movieServiceProvider).fetchMovies('upcoming', genreMap);
+  final movieService = ref.watch(movieServiceProvider);
+  
+  // Tải 2 trang đầu để đảm bảo có đủ phim sau khi lọc
+  final results = await Future.wait([
+    movieService.fetchMovies('upcoming', genreMap, page: 1),
+    movieService.fetchMovies('upcoming', genreMap, page: 2),
+  ]);
+  
+  final allMovies = results.expand((list) => list).toList();
+  final now = DateTime.now();
+  
+  final filteredMovies = allMovies.where((movie) {
+    if (movie.releaseDate.isEmpty) return false;
+    try {
+      final releaseDate = DateTime.parse(movie.releaseDate);
+      return releaseDate.isAfter(now.subtract(const Duration(days: 1)));
+    } catch (e) {
+      return false;
+    }
+  }).toList();
+
+  filteredMovies.sort((a, b) => a.releaseDate.compareTo(b.releaseDate));
+  return filteredMovies;
 });
 
 final movieDetailProvider = FutureProvider.family<MovieModel, int>((

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_image.dart';
 
 class HomeHeader extends StatelessWidget {
   final String userName;
@@ -28,65 +27,41 @@ class HomeHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Hello, $userName 👋",
+                "Hi, $userName 👋",
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.w400,
-                  color: AppColors.hexF2F2F2,
+                  color: AppColors.hex8C8C8C,
                 ),
               ),
               const SizedBox(height: 4),
-              Row(
-                children: [
-                  Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: AppColors.hex575757,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColors.hexFCC434,
-                        width: 1,
-                      ),
-                    ),
-                    child: const Icon(
-                      Icons.location_on,
-                      size: 16,
-                      color: Colors.red,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Text(
-                    location,
-                    style: const TextStyle(
-                      color: AppColors.hexF2F2F2,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+              const Text(
+                "Welcome back",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
-          Row(
+          Stack(
             children: [
-              GestureDetector(
-                onTap: onNotificationTap,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.notifications_none),
-                ),
+              IconButton(
+                onPressed: onNotificationTap,
+                icon: const Icon(Icons.notifications, color: Colors.white, size: 30),
               ),
-              const SizedBox(width: 12),
-              GestureDetector(
-                onTap: onAvatarTap,
-                child: const CircleAvatar(
-                  radius: 20,
-                  backgroundImage: AssetImage(AppImage.avatar),
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.black, width: 2),
+                  ),
                 ),
               ),
             ],
