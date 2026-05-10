@@ -1,42 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../seat_selection/repository/showtime_repository.dart';
 import '../provider/cinema_selection_provider.dart';
+
+final allCinemasProvider = FutureProvider((ref) async {
+  return ref.watch(showtimeRepositoryProvider).getAllCinemas();
+});
 
 class CinemaList extends ConsumerWidget {
   const CinemaList({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedCinema = ref.watch(selectedCinemaProvider);
+    final cinemasAsync = ref.watch(allCinemasProvider);
+    final selectedCinemaId = ref.watch(selectedCinemaProvider);
 
-    return Column(
-      children: [
-        _cinemaCard(
-          ref,
-          'Vincom Ocean Park CGV',
-          '4.55 km | Da Ton, Gia Lam, Ha Noi',
-          selectedCinema == 'Vincom Ocean Park CGV',
-        ),
-        _cinemaCard(
-          ref,
-          'Aeon Mall CGV Long Bien',
-          '9.32 km | 27 Co Linh, Long Bien, Ha Noi',
-          selectedCinema == 'Aeon Mall CGV Long Bien',
-        ),
-        _cinemaCard(
-          ref,
-          'CGV Vincom Ba Trieu',
-          '9.32 km | 191 Ba Trieu, Hai Ba Trung, Ha Noi',
-          selectedCinema == 'CGV Vincom Ba Trieu',
-        ),
-      ],
+    return cinemasAsync.when(
+      data: (cinemas) {
+        if (cinemas.isEmpty) {
+          return const Center(
+            child: Text("Không có rạp nào", style: TextStyle(color: Colors.white)),
+          );
+        }
+        return Column(
+          children: cinemas.map((cinema) {
+            return _cinemaCard(
+              ref,
+              cinema['id'],
+              cinema['name'] ?? 'Unknown',
+              cinema['address'] ?? '',
+              selectedCinemaId == cinema['id'],
+            );
+          }).toList(),
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, stack) => Text("Lỗi: $err", style: const TextStyle(color: Colors.red)),
     );
   }
 
-  Widget _cinemaCard(WidgetRef ref, String name, String address, bool isSelected) {
+  Widget _cinemaCard(WidgetRef ref, String id, String name, String address, bool isSelected) {
     return GestureDetector(
       onTap: () {
-        ref.read(selectedCinemaProvider.notifier).state = name;
+        ref.read(selectedCinemaProvider.notifier).state = id;
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),

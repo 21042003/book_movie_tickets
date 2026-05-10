@@ -1,17 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../model/seat_model.dart';
 import '../model/seat_status.dart';
+import '../model/firestore_models.dart';
+import '../repository/showtime_repository.dart';
 
 class SeatSelectionState {
   final List<Seat> seats;
-  final DateTime selectedDate;
-  final String selectedTime;
   final double ticketPrice;
 
   SeatSelectionState({
     required this.seats,
-    required this.selectedDate,
-    required this.selectedTime,
     this.ticketPrice = 105000.0,
   });
 
@@ -22,51 +20,46 @@ class SeatSelectionState {
 
   SeatSelectionState copyWith({
     List<Seat>? seats,
-    DateTime? selectedDate,
-    String? selectedTime,
   }) {
     return SeatSelectionState(
       seats: seats ?? this.seats,
-      selectedDate: selectedDate ?? this.selectedDate,
-      selectedTime: selectedTime ?? this.selectedTime,
       ticketPrice: ticketPrice,
     );
   }
 }
 
 class SeatSelectionNotifier extends StateNotifier<SeatSelectionState> {
-  SeatSelectionNotifier() : super(_initialState());
+  SeatSelectionNotifier() : super(SeatSelectionState(seats: []));
 
-  static SeatSelectionState _initialState() {
-    final List<Seat> initialSeats = [];
+  // Cập nhật state từ Firestore ShowtimeModel
+  void updateFromFirestore(Map<String, int> seatMap) {
+    final List<Seat> updatedSeats = [];
     final rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J'];
     
+    // Giữ lại các ghế đang được chọn local (nếu chúng vẫn còn trống trên server)
+    final localSelected = state.seats
+        .where((s) => s.status == SeatStatus.selected)
+        .map((s) => s.label)
+        .toSet();
+
     for (var row in rows) {
       for (var col = 2; col <= 13; col++) {
-        SeatStatus status = SeatStatus.available;
+        final label = "$row$col";
+        final statusInt = seatMap[label] ?? 0;
         
-        // Mock data based on requirements
-        if (row == 'D' && col >= 6 && col <= 10) {
+        SeatStatus status;
+        if (statusInt == 2) {
           status = SeatStatus.Reserved;
-        } else if (row == 'E' && col >= 4 && col <= 12) {
-          status = SeatStatus.Reserved;
-        } else if (row == 'F' && col >= 7 && col <= 10) {
+        } else if (localSelected.contains(label)) {
           status = SeatStatus.selected;
-        } else if (row == 'H' && col >= 7 && col <= 8) {
-          status = SeatStatus.selected;
-        } else if (row == 'J' && col == 5) {
-          status = SeatStatus.Reserved; // Based on image
+        } else {
+          status = SeatStatus.available;
         }
-
-        initialSeats.add(Seat(row: row, column: col, status: status));
+        
+        updatedSeats.add(Seat(row: row, column: col, status: status));
       }
     }
-
-    return SeatSelectionState(
-      seats: initialSeats,
-      selectedDate: DateTime(2023, 12, 10),
-      selectedTime: "14:15",
-    );
+    state = state.copyWith(seats: updatedSeats);
   }
 
   void toggleSeat(String label) {
@@ -83,17 +76,21 @@ class SeatSelectionNotifier extends StateNotifier<SeatSelectionState> {
       }).toList(),
     );
   }
-
-  void selectDate(DateTime date) {
-    state = state.copyWith(selectedDate: date);
-  }
-
-  void selectTime(String time) {
-    state = state.copyWith(selectedTime: time);
-  }
 }
 
 final seatSelectionProvider =
     StateNotifierProvider<SeatSelectionNotifier, SeatSelectionState>((ref) {
   return SeatSelectionNotifier();
+});
+
+// Stream provider để lắng nghe sự thay đổi ghế từ Firebase
+final firestoreShowtimeProvider = StreamProvider.family<Map<String, int>, String>((ref, showtimeId) {
+  final repository = ref.watch(showtimeRepositoryProvider);
+  return repository.watchShowtime(showtimeId).map((st) => st.seatMap);
+});
+
+// Stream provider để lấy toàn bộ thông tin suất chiếu
+final firestoreShowtimeFullProvider = StreamProvider.family<ShowtimeFirestoreModel, String>((ref, showtimeId) {
+  final repository = ref.watch(showtimeRepositoryProvider);
+  return repository.watchShowtime(showtimeId);
 });

@@ -4,8 +4,12 @@ import 'package:intl/intl.dart';
 import '../../../core/constants/app_colors.dart';
 import '../provider/seat_selection_provider.dart';
 
+import '../../payment/screens/payment_screen.dart';
+
 class SeatOrderBottomBar extends ConsumerWidget {
-  const SeatOrderBottomBar({super.key});
+  final int movieId;
+  final String showtimeId;
+  const SeatOrderBottomBar({super.key, required this.movieId, required this.showtimeId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -48,7 +52,15 @@ class SeatOrderBottomBar extends ConsumerWidget {
               onPressed: state.selectedCount == 0
                   ? null
                   : () {
-                      // Handle booking logic
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PaymentScreen(
+                            movieId: movieId,
+                            showtimeId: showtimeId,
+                          ),
+                        ),
+                      );
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.hexFCC434,
@@ -60,7 +72,7 @@ class SeatOrderBottomBar extends ConsumerWidget {
                 ),
               ),
               child: const Text(
-                "But ticket", // Matching user's typo "But ticket" in screenshot
+                "But ticket",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
             ),

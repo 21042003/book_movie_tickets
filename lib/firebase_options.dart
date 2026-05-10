@@ -66,4 +66,5 @@ class DefaultFirebaseOptions {
     projectId: 'movie-booking-c03a3',
     storageBucket: 'movie-booking-c03a3.firebasestorage.app',
   );
+
 }
