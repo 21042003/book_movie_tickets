@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/app_icons.dart';
 import '../../seat_selection/repository/showtime_repository.dart';
 import '../provider/cinema_selection_provider.dart';
 
@@ -63,12 +64,26 @@ class CinemaList extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    name,
-                    style: TextStyle(
-                      color: isSelected ? const Color(0xFFFCC434) : Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        name,
+                        style: TextStyle(
+                          color: isSelected ? const Color(0xFFFCC434) : Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(2),),
+                        child: Image.asset(
+                          fit: BoxFit.cover,
+                          AppIcons.cgv,
+                          width: 32,
+                          height: 16,
+                        ),
+                      ),
+                    ],
                   ),
                   Text(
                     address,
@@ -76,11 +91,6 @@ class CinemaList extends ConsumerWidget {
                   ),
                 ],
               ),
-            ),
-            Icon(
-              Icons.confirmation_num,
-              color: isSelected ? const Color(0xFFFCC434) : Colors.red,
-              size: 20,
             ),
           ],
         ),

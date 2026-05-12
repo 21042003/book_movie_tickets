@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../authentication/repository/auth_repository.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../home/models/Api_service/movie_service.dart';
 import '../../home/models/movie_model.dart';
@@ -137,6 +138,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   }
 
   Widget _buildContinueButton(MovieModel movie, ShowtimeFirestoreModel showtime, SeatSelectionState seatState) {
+    final user = ref.read(authRepositoryProvider).currentUser;
+    if (user == null) return const SizedBox.shrink();
+
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
@@ -165,7 +169,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
             await ref.read(showtimeRepositoryProvider).bookSeats(
               showtimeId: widget.showtimeId,
               seatLabels: selectedSeatLabels,
-              userId: 'user_123', 
+              userId: user.uid, 
               totalAmount: seatState.totalAmount,
               movieTitle: movie.title,
               moviePoster: movie.posterPath,
@@ -181,7 +185,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
               Navigator.pop(context); 
 
               final booking = BookingModel(
-                userId: 'user_123',
+                userId: user.uid,
                 movieId: movie.id,
                 movieTitle: movie.title,
                 moviePoster: movie.posterPath,

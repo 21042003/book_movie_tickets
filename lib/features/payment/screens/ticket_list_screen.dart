@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../authentication/repository/auth_repository.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/custom_bottom_nav_bar.dart';
 import '../../home/models/Api_service/movie_service.dart';
@@ -29,8 +30,15 @@ class TicketListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Sử dụng ID 'user_123' đồng bộ với màn hình Payment
-    final bookingsAsync = ref.watch(userBookingsProvider('user_123'));
+    final user = ref.watch(authRepositoryProvider).currentUser;
+    if (user == null) {
+      return const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(child: Text("Vui lòng đăng nhập để xem vé", style: TextStyle(color: Colors.white))),
+      );
+    }
+    
+    final bookingsAsync = ref.watch(userBookingsProvider(user.uid));
 
     return Scaffold(
       backgroundColor: Colors.black,

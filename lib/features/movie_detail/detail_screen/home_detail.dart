@@ -8,7 +8,6 @@ import '../../seat_selection/selection/seat_screen.dart';
 import '../detail_widget/cinema_list.dart';
 import '../detail_widget/movie_header.dart';
 import '../detail_widget/movie_metainfo.dart';
-import '../detail_widget/people_list.dart';
 import '../detail_widget/section_title.dart';
 import '../detail_widget/story_linetext.dart';
 import '../provider/cinema_selection_provider.dart';

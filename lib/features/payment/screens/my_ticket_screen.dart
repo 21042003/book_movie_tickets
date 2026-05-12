@@ -1,8 +1,7 @@
 import 'package:barcode_widget/barcode_widget.dart';
+import 'package:book_movie_tickets/core/constants/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import '../../../core/constants/app_colors.dart';
 import '../../home/models/movie_model.dart';
 import '../models/booking_model.dart';
 
@@ -178,14 +177,14 @@ class MyTicketScreen extends StatelessWidget {
               bottom: 140, // Adjust based on bottom part height
               child: Row(
                 children: [
-                  Container(
-                    width: 30,
-                    height: 30,
-                    decoration: const BoxDecoration(
-                      color: Colors.black,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
+                  // Container(
+                  //   width: 30,
+                  //   height: 30,
+                  //   decoration: const BoxDecoration(
+                  //     color: Colors.black,
+                  //     shape: BoxShape.circle,
+                  //   ),
+                  // ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -210,14 +209,14 @@ class MyTicketScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Container(
-                    width: 30,
-                    height: 30,
-                    decoration: const BoxDecoration(
-                      color: Colors.black,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
+                  // Container(
+                  //   width: 30,
+                  //   height: 30,
+                  //   decoration: const BoxDecoration(
+                  //     color: Colors.black,
+                  //     shape: BoxShape.circle,
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -297,10 +296,19 @@ class MyTicketScreen extends StatelessWidget {
                       ),
                     ),
                     if (isCinema)
-                      const WidgetSpan(
+                      WidgetSpan(
                         child: Padding(
-                          padding: EdgeInsets.only(left: 8),
-                          child: Icon(Icons.movie, color: Colors.red, size: 16),
+                          padding: const EdgeInsets.only(left: 8),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(2)),
+                            child: Image.asset(
+                              fit: BoxFit.cover,
+                              AppIcons.cgv,
+                              width: 36,
+                              height: 16,
+                            ),
+                          ),
+                          // Icon(Icons.movie, color: Colors.red, size: 16),
                         ),
                       ),
                   ],

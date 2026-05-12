@@ -30,7 +30,7 @@ class SeatSelectionScreen extends ConsumerWidget {
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
+            padding: const EdgeInsets.only(top: 20, bottom: 20, left: 16, right: 16),
             child: Row(
               children: [
                 IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.pop(context)),
