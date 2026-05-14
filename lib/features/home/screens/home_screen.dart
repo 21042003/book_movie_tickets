@@ -2,12 +2,11 @@ import 'package:book_movie_tickets/features/home/screens/see_all_movies_screen.d
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../authentication/repository/auth_repository.dart';
-import '../../../authentication/view_model/auth_view_model.dart';
-
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/custom_bottom_nav_bar.dart';
 import '../../../core/widgets/see_all_click.dart';
 import '../../payment/screens/ticket_list_screen.dart';
+import '../../profile/screens/profile_screen.dart';
 import '../controllers/see_all_movies_controller.dart';
 import '../widgets/coming_soon_section.dart';
 import '../widgets/home_header.dart';
@@ -36,6 +35,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         context,
         MaterialPageRoute(builder: (context) => const SeeAllMoviesScreen()),
       );
+    } else if (index == 3) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ProfileScreen()),
+      );
     }
   }
 
@@ -50,23 +54,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               userName: ref.watch(authRepositoryProvider).currentUser?.displayName ?? "User",
               location: "HaNoi, VietNam",
               onAvatarTap: () {
-                // Show Logout option
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text("Sign Out"),
-                    content: const Text("Are you sure you want to sign out?"),
-                    actions: [
-                      TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
-                      TextButton(
-                        onPressed: () {
-                          ref.read(authViewModelProvider.notifier).signOut();
-                          Navigator.pop(context);
-                        },
-                        child: const Text("Sign Out", style: TextStyle(color: Colors.red)),
-                      ),
-                    ],
-                  ),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
                 );
               },
               onNotificationTap: () {},

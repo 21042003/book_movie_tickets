@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/custom_bottom_nav_bar.dart';
 import '../../payment/screens/ticket_list_screen.dart';
+import '../../profile/screens/profile_screen.dart';
 import '../controllers/see_all_movies_controller.dart';
 import '../models/movie_model.dart';
 import 'home_screen.dart';
@@ -35,6 +36,11 @@ class _SeeAllMoviesScreenState extends ConsumerState<SeeAllMoviesScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const TicketListScreen()),
+      );
+    } else if (index == 3) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ProfileScreen()),
       );
     }
   }

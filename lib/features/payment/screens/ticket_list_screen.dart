@@ -6,6 +6,7 @@ import '../../../core/widgets/custom_bottom_nav_bar.dart';
 import '../../home/models/Api_service/movie_service.dart';
 import '../../home/screens/home_screen.dart';
 import '../../home/screens/see_all_movies_screen.dart';
+import '../../profile/screens/profile_screen.dart';
 import '../models/booking_model.dart';
 import '../repository/booking_repository.dart';
 import 'my_ticket_screen.dart';
@@ -24,6 +25,11 @@ class TicketListScreen extends ConsumerWidget {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const SeeAllMoviesScreen()),
+      );
+    } else if (index == 3) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ProfileScreen()),
       );
     }
   }
@@ -85,7 +91,6 @@ class TicketListScreen extends ConsumerWidget {
           child: CircularProgressIndicator(color: AppColors.hexFCC434),
         ),
         error: (err, stack) {
-          // Hiển thị thông báo nếu thiếu Index
           if (err.toString().contains('failed-precondition')) {
             return const Center(
               child: Padding(
@@ -119,7 +124,6 @@ class _TicketCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () async {
-        // Hiện loading trong khi tải lại thông tin phim đầy đủ từ API
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -129,10 +133,9 @@ class _TicketCard extends ConsumerWidget {
         );
 
         try {
-          // Fetch MovieModel đầy đủ vì màn MyTicketScreen cần (duration, genres...)
           final movie = await ref.read(movieServiceProvider).fetchMovieDetail(booking.movieId);
           if (context.mounted) {
-            Navigator.pop(context); // Tắt loading
+            Navigator.pop(context);
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -161,7 +164,6 @@ class _TicketCard extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            // Poster phim
             ClipRRect(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
@@ -180,7 +182,6 @@ class _TicketCard extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 16),
-            // Thông tin vé
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),

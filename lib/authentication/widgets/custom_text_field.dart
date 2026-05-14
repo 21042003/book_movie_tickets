@@ -44,8 +44,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
             fillColor: AppColors.hex1C1C1C,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: widget.errorText != null 
-                  ? const BorderSide(color: Colors.redAccent, width: 1) 
+              borderSide: widget.errorText != null
+                  ? const BorderSide(color: Colors.redAccent, width: 1)
                   : BorderSide.none,
             ),
             suffixIcon: widget.isPassword
@@ -54,7 +54,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       _obscureText ? Icons.visibility_off : Icons.visibility,
                       color: Colors.white38,
                     ),
-                    onPressed: () => setState(() => _obscureText = !_obscureText),
+                    onPressed: () =>
+                        setState(() => _obscureText = !_obscureText),
                   )
                 : null,
           ),
