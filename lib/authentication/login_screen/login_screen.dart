@@ -7,6 +7,7 @@ import '../recover_password_screen/recover_password_screen.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/auth_button.dart';
 import '../view_model/auth_view_model.dart';
+import '../../../core/localization/language_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -50,6 +51,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     _listenToAuthState();
     final authState = ref.watch(authViewModelProvider);
+    final tr = ref.watch(translationsProvider);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -69,9 +71,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Sign in',
-              style: TextStyle(
+            Text(
+              tr.signIn,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -79,14 +81,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
             const SizedBox(height: 40),
             CustomTextField(
-              label: 'Email',
+              label: tr.email,
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               errorText: authState.emailError,
             ),
             const SizedBox(height: 24),
             CustomTextField(
-              label: 'Password',
+              label: tr.password,
               isPassword: true,
               controller: _passwordController,
               errorText: authState.passwordError,
@@ -101,15 +103,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     MaterialPageRoute(builder: (context) => const RecoverPasswordScreen()),
                   );
                 },
-                child: const Text(
-                  'Forgot password?',
-                  style: TextStyle(color: AppColors.hexFCC434),
+                child: Text(
+                  tr.forgotPassword,
+                  style: const TextStyle(color: AppColors.hexFCC434),
                 ),
               ),
             ),
             const SizedBox(height: 40),
             AuthButton(
-              text: 'Sign in',
+              text: tr.signIn,
               isLoading: authState.isLoading,
               onPressed: () {
                 ref.read(authViewModelProvider.notifier).signIn(
@@ -122,9 +124,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  "Don't have an account? ",
-                  style: TextStyle(color: Colors.white70),
+                Text(
+                  tr.dontHaveAccount,
+                  style: const TextStyle(color: Colors.white70),
                 ),
                 GestureDetector(
                   onTap: () {
@@ -133,9 +135,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       MaterialPageRoute(builder: (context) => const RegisterScreen()),
                     );
                   },
-                  child: const Text(
-                    'Sign up',
-                    style: TextStyle(
+                  child: Text(
+                    tr.signUp,
+                    style: const TextStyle(
                       color: AppColors.hexFCC434,
                       fontWeight: FontWeight.bold,
                     ),

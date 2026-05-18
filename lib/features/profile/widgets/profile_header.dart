@@ -7,6 +7,8 @@ class ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: Row(
@@ -24,8 +26,8 @@ class ProfileHeader extends StatelessWidget {
               children: [
                 Text(
                   user?.displayName ?? 'Angelina',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: color,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -35,9 +37,12 @@ class ProfileHeader extends StatelessWidget {
                   children: [
                     const Icon(Icons.phone_outlined, color: Colors.grey, size: 16),
                     const SizedBox(width: 8),
-                    Text(
-                      user?.phoneNumber ?? '(704) 555-0127',
-                      style: const TextStyle(color: Colors.grey, fontSize: 14),
+                    Expanded(
+                      child: Text(
+                        user?.phoneNumber ?? '(704) 555-0127',
+                        style: const TextStyle(color: Colors.grey, fontSize: 14),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),
@@ -46,9 +51,12 @@ class ProfileHeader extends StatelessWidget {
                   children: [
                     const Icon(Icons.email_outlined, color: Colors.grey, size: 16),
                     const SizedBox(width: 8),
-                    Text(
-                      user?.email ?? 'angelina@example.com',
-                      style: const TextStyle(color: Colors.grey, fontSize: 14),
+                    Expanded(
+                      child: Text(
+                        user?.email ?? 'angelina@example.com',
+                        style: const TextStyle(color: Colors.grey, fontSize: 14),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),
@@ -57,7 +65,7 @@ class ProfileHeader extends StatelessWidget {
           ),
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.edit_outlined, color: Colors.white),
+            icon: Icon(Icons.edit_outlined, color: color),
           ),
         ],
       ),

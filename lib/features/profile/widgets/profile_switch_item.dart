@@ -17,12 +17,14 @@ class ProfileSwitchItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87;
+
     return ListTile(
-      leading: Icon(icon, color: Colors.white, size: 28),
+      leading: Icon(icon, color: color, size: 28),
       title: Text(
         title,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: color,
           fontSize: 18,
           fontWeight: FontWeight.w500,
         ),
@@ -33,7 +35,6 @@ class ProfileSwitchItem extends StatelessWidget {
         activeColor: AppColors.hexFCC434,
         activeTrackColor: AppColors.hexFCC434.withOpacity(0.3),
         inactiveThumbColor: Colors.grey,
-        inactiveTrackColor: Colors.white10,
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
     );

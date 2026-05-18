@@ -1,8 +1,3 @@
-
-import 'package:book_movie_tickets/features/home/models/production_company.dart';
-import 'package:book_movie_tickets/features/home/models/production_country.dart';
-import 'package:book_movie_tickets/features/home/models/spoken_language.dart';
-
 import 'genres_model.dart';
 
 class MovieModel {
@@ -26,7 +21,6 @@ class MovieModel {
   final String originalLanguage;
   final String? homepage;
   final String? imdbId;
-
 
   final List<String> originCountry;
   final List<GenresModel> genres;
@@ -85,9 +79,9 @@ class MovieModel {
       homepage: json['homepage'],
       imdbId: json['imdb_id'],
       originCountry: List<String>.from(json['origin_country'] ?? []),
-      genres: (json['genres'] as List? ?? [])
-          .map((e) => GenresModel.fromJson(e))
-          .toList(),
+      genres: (json['genres'] is List)
+          ? (json['genres'] as List).map((e) => GenresModel.fromJson(e)).toList()
+          : [],
       productionCompanies: (json['production_companies'] as List? ?? [])
           .map((e) => ProductionCompany.fromJson(e))
           .toList(),
@@ -97,6 +91,96 @@ class MovieModel {
       spokenLanguages: (json['spoken_languages'] as List? ?? [])
           .map((e) => SpokenLanguage.fromJson(e))
           .toList(),
+    );
+  }
+
+  factory MovieModel.fromListJson(Map<String, dynamic> json, List<GenresModel> movieGenres) {
+    return MovieModel(
+      id: json['id'],
+      title: json['title'] ?? '',
+      originalTitle: json['original_title'] ?? '',
+      overview: json['overview'] ?? '',
+      backdropPath: json['backdrop_path'] ?? '',
+      posterPath: json['poster_path'] ?? '',
+      runtime: 0,
+      voteAverage: (json['vote_average'] ?? 0).toDouble(),
+      voteCount: json['vote_count'] ?? 0,
+      popularity: (json['popularity'] ?? 0).toDouble(),
+      releaseDate: json['release_date'] ?? '',
+      budget: 0,
+      revenue: 0,
+      status: '',
+      tagline: '',
+      adult: json['adult'] ?? false,
+      video: json['video'] ?? false,
+      originalLanguage: json['original_language'] ?? '',
+      homepage: null,
+      imdbId: null,
+      originCountry: List<String>.from(json['origin_country'] ?? []),
+      genres: movieGenres,
+      productionCompanies: [],
+      productionCountries: [],
+      spokenLanguages: [],
+    );
+  }
+}
+
+class ProductionCompany {
+  final int id;
+  final String name;
+  final String? logoPath;
+  final String originCountry;
+
+  ProductionCompany({
+    required this.id,
+    required this.name,
+    required this.logoPath,
+    required this.originCountry,
+  });
+
+  factory ProductionCompany.fromJson(Map<String, dynamic> json) {
+    return ProductionCompany(
+      id: json['id'],
+      name: json['name'] ?? '',
+      logoPath: json['logo_path'],
+      originCountry: json['origin_country'] ?? '',
+    );
+  }
+}
+
+class ProductionCountry {
+  final String isoCode;
+  final String name;
+
+  ProductionCountry({
+    required this.isoCode,
+    required this.name,
+  });
+
+  factory ProductionCountry.fromJson(Map<String, dynamic> json) {
+    return ProductionCountry(
+      isoCode: json['iso_3166_1'] ?? '',
+      name: json['name'] ?? '',
+    );
+  }
+}
+
+class SpokenLanguage {
+  final String englishName;
+  final String isoCode;
+  final String name;
+
+  SpokenLanguage({
+    required this.englishName,
+    required this.isoCode,
+    required this.name,
+  });
+
+  factory SpokenLanguage.fromJson(Map<String, dynamic> json) {
+    return SpokenLanguage(
+      englishName: json['english_name'] ?? '',
+      isoCode: json['iso_639_1'] ?? '',
+      name: json['name'] ?? '',
     );
   }
 }

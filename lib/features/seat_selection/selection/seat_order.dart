@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import '../../../core/constants/app_colors.dart';
 import '../provider/seat_selection_provider.dart';
 
+import '../../../core/localization/language_provider.dart';
+
 import '../../payment/screens/payment_screen.dart';
 
 class SeatOrderBottomBar extends ConsumerWidget {
@@ -14,6 +16,7 @@ class SeatOrderBottomBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(seatSelectionProvider);
+    final tr = ref.watch(translationsProvider);
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: 'VND');
 
     return Container(
@@ -33,9 +36,9 @@ class SeatOrderBottomBar extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Total",
-                  style: TextStyle(color: AppColors.hex8C8C8C, fontSize: 14),
+                Text(
+                  tr.total,
+                  style: const TextStyle(color: AppColors.hex8C8C8C, fontSize: 14),
                 ),
                 Text(
                   currencyFormat.format(state.totalAmount),
@@ -71,9 +74,9 @@ class SeatOrderBottomBar extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(30),
                 ),
               ),
-              child: const Text(
-                "But ticket",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              child: Text(
+                tr.buyTicket,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
             ),
           ],

@@ -9,13 +9,13 @@ class NowPlayingSection extends StatelessWidget {
   const NowPlayingSection({super.key, required this.movies});
 
   String _formatRuntime(int minutes) {
-    if (minutes <= 0) return 'N/A';
+    if (minutes <= 0) return '';
     final hours = minutes ~/ 60;
     final remainingMinutes = minutes % 60;
     if (hours > 0) {
-      return '${hours}h ${remainingMinutes}m';
+      return '${hours}h ${remainingMinutes}m • ';
     } else {
-      return '${remainingMinutes}m';
+      return '${remainingMinutes}m • ';
     }
   }
 
@@ -48,7 +48,7 @@ class NowPlayingSection extends StatelessWidget {
         ),
         const SizedBox(height: 8.0),
         Text(
-          "${_formatRuntime(movies.runtime)} • ${movies.genres.map((g) => g.name).join(', ')}",
+          "${_formatRuntime(movies.runtime)}${movies.genres.map((g) => g.name).join(', ')}",
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,

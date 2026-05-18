@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_image.dart';
-import '../../provider/language_provider.dart';
+import '../../../core/localization/language_provider.dart';
 
 class OnboardingContent extends ConsumerWidget {
   const OnboardingContent({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final lang = ref.watch(languageProvider);
+    final tr = ref.watch(translationsProvider);
 
     return Column(
       children: [
@@ -29,7 +29,7 @@ class OnboardingContent extends ConsumerWidget {
         ),
         const SizedBox(height: 40),
         Text(
-          lang.onboardingTitle,
+          tr.onboardingTitle,
           textAlign: TextAlign.center,
           style: const TextStyle(
             color: Colors.white,
@@ -39,7 +39,7 @@ class OnboardingContent extends ConsumerWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          lang.onboardingSubTitle,
+          tr.onboardingSubTitle,
           textAlign: TextAlign.center,
           style: const TextStyle(
             color: Colors.white70,

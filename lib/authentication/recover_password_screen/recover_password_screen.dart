@@ -4,6 +4,7 @@ import '../../../core/widgets/success_dialog.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/auth_button.dart';
 import '../view_model/auth_view_model.dart';
+import '../../../core/localization/language_provider.dart';
 
 class RecoverPasswordScreen extends ConsumerStatefulWidget {
   const RecoverPasswordScreen({super.key});
@@ -22,6 +23,7 @@ class _RecoverPasswordScreenState extends ConsumerState<RecoverPasswordScreen> {
   }
 
   void _listenToAuthState() {
+    final tr = ref.read(translationsProvider);
     ref.listen(authViewModelProvider, (previous, next) {
       if (next.generalError != null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -38,8 +40,8 @@ class _RecoverPasswordScreenState extends ConsumerState<RecoverPasswordScreen> {
         
         SuccessDialog.show(
           context,
-          title: 'Đã gửi yêu cầu!',
-          message: 'Vui lòng kiểm tra hòm thư Email của bạn để thực hiện đổi mật khẩu mới.',
+          title: tr.requestSent,
+          message: tr.checkEmailDesc,
         );
 
         Future.delayed(const Duration(seconds: 3), () {
@@ -56,6 +58,7 @@ class _RecoverPasswordScreenState extends ConsumerState<RecoverPasswordScreen> {
   Widget build(BuildContext context) {
     _listenToAuthState();
     final authState = ref.watch(authViewModelProvider);
+    final tr = ref.watch(translationsProvider);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -75,29 +78,29 @@ class _RecoverPasswordScreenState extends ConsumerState<RecoverPasswordScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Forgot Password',
-              style: TextStyle(
+            Text(
+              tr.forgotPasswordTitle,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Enter your email address and we will send you a link to reset your password.',
-              style: TextStyle(color: Colors.white70, fontSize: 16),
+            Text(
+              tr.recoverPasswordDesc,
+              style: const TextStyle(color: Colors.white70, fontSize: 16),
             ),
             const SizedBox(height: 40),
             CustomTextField(
-              label: 'Email',
+              label: tr.email,
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               errorText: authState.emailError,
             ),
             const SizedBox(height: 40),
             AuthButton(
-              text: 'Send Link',
+              text: tr.sendLink,
               isLoading: authState.isLoading,
               onPressed: () {
                 ref.read(authViewModelProvider.notifier).recoverPassword(

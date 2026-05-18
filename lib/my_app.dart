@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/theme/theme_provider.dart';
 import 'authentication/start_screen/start_screen.dart';
 import 'authentication/repository/auth_repository.dart';
 import 'features/home/screens/home_screen.dart';
@@ -10,16 +11,13 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
+    final themeMode = ref.watch(themeModeProvider);
 
     return MaterialApp(
       title: 'movie-ticket',
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF000000),
-        primaryColor: const Color(0xFFFFC107),
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        fontFamily: 'Montserrat',
-      ),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeMode,
       home: authState.when(
         data: (user) {
           if (user != null) {

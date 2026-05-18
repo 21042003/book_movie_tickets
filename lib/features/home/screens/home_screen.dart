@@ -5,6 +5,7 @@ import '../../../authentication/repository/auth_repository.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/custom_bottom_nav_bar.dart';
 import '../../../core/widgets/see_all_click.dart';
+import '../../../core/localization/language_provider.dart';
 import '../../payment/screens/ticket_list_screen.dart';
 import '../../profile/screens/profile_screen.dart';
 import '../controllers/see_all_movies_controller.dart';
@@ -12,6 +13,7 @@ import '../widgets/coming_soon_section.dart';
 import '../widgets/home_header.dart';
 import '../widgets/movie_card.dart';
 import '../widgets/search_bar_widget.dart';
+import 'search_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -45,8 +47,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final tr = ref.watch(translationsProvider);
+
     return Scaffold(
-      backgroundColor: AppColors.hex000000,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: ListView(
           children: [
@@ -63,11 +67,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             SearchBarWidget(
               controller: _controller,
+              readOnly: true,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SearchScreen()),
+                );
+              },
               onChanged: (value) {},
             ),
             const SizedBox(height: 16.0),
             SeeAllClick(
-              title: "Now playing",
+              title: tr.nowPlaying,
               onTap: () {
                 Navigator.push(
                   context,
@@ -83,7 +94,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             const MovieCard(),
             const SizedBox(height: 24.0),
             SeeAllClick(
-              title: "Coming soon",
+              title: tr.comingSoon,
               onTap: () {
                 Navigator.push(
                   context,
@@ -98,7 +109,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             const SizedBox(height: 16.0),
             const ComingSoonList(),
             const SizedBox(height: 24.0),
-            SeeAllClick(title: "Promo & Discount", onTap: () {}),
+            SeeAllClick(title: tr.promoDiscount, onTap: () {}),
             const SizedBox(height: 20),
           ],
         ),

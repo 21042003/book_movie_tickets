@@ -1,9 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-
+import '../../../../core/localization/language_provider.dart';
 import '../genres_model.dart';
 import '../movie_model.dart';
 
@@ -12,9 +11,9 @@ class MovieService {
   final String _baseUrl = 'https://api.themoviedb.org/3';
 
   ///API lay the loai phim
-  Future<Map<int, GenresModel>> fetchGenreMap() async {
+  Future<Map<int, GenresModel>> fetchGenreMap({String language = 'vi-VN'}) async {
     final response = await http.get(
-      Uri.parse('$_baseUrl/genre/movie/list?api_key=$_apiKey&language=vi-VN'),
+      Uri.parse('$_baseUrl/genre/movie/list?api_key=$_apiKey&language=$language'),
     );
 
     if (response.statusCode == 200) {
@@ -24,42 +23,38 @@ class MovieService {
     throw Exception('Failed to load genres');
   }
 
-  /// Ham dung chung de lay danh sach phim theo Type và lấy kèm Runtime
+  /// Tối ưu: Lấy danh sách phim mà KHÔNG gọi fetchMovieDetail cho từng phim
   Future<List<MovieModel>> fetchMovies(
     String type,
     Map<int, GenresModel> genreMap, {
     int page = 1,
+    String language = 'vi-VN',
   }) async {
+    // Thêm region=VN để lấy lịch chiếu chuẩn tại Việt Nam
     final response = await http.get(
-      Uri.parse('$_baseUrl/movie/$type?api_key=$_apiKey&language=vi-VN&page=$page'),
+      Uri.parse('$_baseUrl/movie/$type?api_key=$_apiKey&language=$language&page=$page&region=VN'),
     );
 
     if (response.statusCode == 200) {
-      final List results = json.decode(response.body)['results'];
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List results = data['results'];
       
-      final List<int> movieIds = results.map((m) => m['id'] as int).toList();
+      return results.map((m) {
+        final List<int> genreIds = List<int>.from(m['genre_ids'] ?? []);
+        final movieGenres = genreIds
+            .where((id) => genreMap.containsKey(id))
+            .map((id) => genreMap[id]!)
+            .toList();
 
-      // Sử dụng Future.wait nhưng bọc try-catch cho từng phim để tránh crash cả list
-      final List<MovieModel?> detailedMovies = await Future.wait(
-        movieIds.map((id) async {
-          try {
-            return await fetchMovieDetail(id);
-          } catch (e) {
-            debugPrint('Error fetching movie detail for ID $id: $e');
-            return null; // Trả về null nếu phim này bị lỗi dữ liệu
-          }
-        })
-      );
-
-      // Lọc bỏ các phim bị null (lỗi)
-      return detailedMovies.whereType<MovieModel>().toList();
+        return MovieModel.fromListJson(m, movieGenres);
+      }).toList();
     }
     throw Exception('Failed to load movies');
   }
 
-  Future<MovieModel> fetchMovieDetail(int movieId) async {
+  Future<MovieModel> fetchMovieDetail(int movieId, {String language = 'vi-VN'}) async {
     final url = Uri.parse(
-      'https://api.themoviedb.org/3/movie/$movieId?api_key=$_apiKey&language=vi-VN',
+      'https://api.themoviedb.org/3/movie/$movieId?api_key=$_apiKey&language=$language',
     );
 
     final response = await http.get(url);
@@ -72,7 +67,31 @@ class MovieService {
     }
   }
 
-  ///Trong class MovieService
+  Future<List<MovieModel>> searchMovies(String query, Map<int, GenresModel> genreMap, {String language = 'vi-VN'}) async {
+    if (query.isEmpty) return [];
+    
+    final url = Uri.parse(
+      '$_baseUrl/search/movie?api_key=$_apiKey&language=$language&query=${Uri.encodeComponent(query)}',
+    );
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final List results = json.decode(response.body)['results'];
+      
+      return results.map((m) {
+        final List<int> genreIds = List<int>.from(m['genre_ids'] ?? []);
+        final movieGenres = genreIds
+            .where((id) => genreMap.containsKey(id))
+            .map((id) => genreMap[id]!)
+            .toList();
+
+        return MovieModel.fromListJson(m, movieGenres);
+      }).toList();
+    }
+    throw Exception('Failed to search movies');
+  }
+
   Future<String?> fetchMovieTrailer(int movieId) async {
     final url = Uri.parse('$_baseUrl/movie/$movieId/videos?api_key=$_apiKey');
     final response = await http.get(url);
@@ -88,22 +107,21 @@ class MovieService {
   }
 }
 
-/// Khoi tao service
 final movieServiceProvider = Provider((ref) => MovieService());
 
-/// Provider luu tru genre Map
 final genreMapProvider = FutureProvider<Map<int, GenresModel>>((ref) async {
-  return ref.watch(movieServiceProvider).fetchGenreMap();
+  final lang = ref.watch(languageProvider).tmdbLanguage;
+  return ref.watch(movieServiceProvider).fetchGenreMap(language: lang);
 });
 
-///Lay danh sach phim pho bien
 final popularMoviesProvider = FutureProvider<List<MovieModel>>((ref) async {
   final genreMap = await ref.watch(genreMapProvider.future);
   final movieService = ref.watch(movieServiceProvider);
-  // Lấy 2 trang để dữ liệu phong phú
+  final lang = ref.watch(languageProvider).tmdbLanguage;
+
   final results = await Future.wait([
-    movieService.fetchMovies('now_playing', genreMap, page: 1),
-    movieService.fetchMovies('now_playing', genreMap, page: 2),
+    movieService.fetchMovies('now_playing', genreMap, page: 1, language: lang),
+    movieService.fetchMovies('now_playing', genreMap, page: 2, language: lang),
   ]);
   return results.expand((list) => list).toList();
 });
@@ -111,11 +129,11 @@ final popularMoviesProvider = FutureProvider<List<MovieModel>>((ref) async {
 final upcomingMoviesProvider = FutureProvider<List<MovieModel>>((ref) async {
   final genreMap = await ref.watch(genreMapProvider.future);
   final movieService = ref.watch(movieServiceProvider);
+  final lang = ref.watch(languageProvider).tmdbLanguage;
   
-  // Tải 2 trang đầu để đảm bảo có đủ phim sau khi lọc
   final results = await Future.wait([
-    movieService.fetchMovies('upcoming', genreMap, page: 1),
-    movieService.fetchMovies('upcoming', genreMap, page: 2),
+    movieService.fetchMovies('upcoming', genreMap, page: 1, language: lang),
+    movieService.fetchMovies('upcoming', genreMap, page: 2, language: lang),
   ]);
   
   final allMovies = results.expand((list) => list).toList();
@@ -139,14 +157,13 @@ final movieDetailProvider = FutureProvider.family<MovieModel, int>((
   ref,
   movieId,
 ) async {
-  return ref.watch(movieServiceProvider).fetchMovieDetail(movieId);
+  final lang = ref.watch(languageProvider).tmdbLanguage;
+  return ref.watch(movieServiceProvider).fetchMovieDetail(movieId, language: lang);
 });
 
-/// Provider lấy YouTube Key của Trailer
 final movieTrailerProvider = FutureProvider.family<String?, int>((
   ref,
   movieId,
 ) async {
   return ref.watch(movieServiceProvider).fetchMovieTrailer(movieId);
 });
-

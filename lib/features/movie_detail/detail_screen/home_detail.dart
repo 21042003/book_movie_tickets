@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import '../../../core/localization/language_provider.dart';
 import '../../../core/widgets/continue_button.dart';
 import '../../../core/widgets/navigation_back.dart';
 import '../../home/models/Api_service/movie_service.dart';
@@ -29,75 +30,118 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
     final movieAsync = ref.watch(movieDetailProvider(widget.movieId));
     final selectedCinemaId = ref.watch(selectedCinemaProvider);
     final selectedShowtimeId = ref.watch(selectedShowtimeIdProvider);
+    final tr = ref.watch(translationsProvider);
 
     return Scaffold(
       backgroundColor: Colors.black,
       body: movieAsync.when(
-        data: (movie) => Stack(
-          children: [
-            SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  MovieHeader(movies: movie),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        MovieMetaInfo(movie: movie),
-                        const SizedBox(height: 20),
-                        const SectionTitle(title: 'Storyline'),
-                        GestureDetector(
-                          onTap: () => setState(() => _isStoryExpanded = !_isStoryExpanded),
-                          child: StorylineText(movie: movie, isExpanded: _isStoryExpanded),
-                        ),
-                        const SizedBox(height: 20),
-                        const SectionTitle(title: 'Cinema'),
-                        const CinemaList(),
-                        
-                        if (selectedCinemaId != null) ...[
+        data: (movie) {
+          final releaseDate = DateTime.tryParse(movie.releaseDate);
+          final isReleased = releaseDate != null && releaseDate.isBefore(DateTime.now());
+
+          return Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MovieHeader(movies: movie),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          MovieMetaInfo(movie: movie),
                           const SizedBox(height: 20),
-                          const SectionTitle(title: 'Select Date'),
-                          _buildDateSelection(),
+                          SectionTitle(title: tr.storyline),
+                          GestureDetector(
+                            onTap: () => setState(() => _isStoryExpanded = !_isStoryExpanded),
+                            child: StorylineText(movie: movie, isExpanded: _isStoryExpanded),
+                          ),
                           const SizedBox(height: 20),
-                          const SectionTitle(title: 'Select Showtime'),
-                          _buildShowtimeList(movie.id),
+                          
+                          if (isReleased) ...[
+                            SectionTitle(title: tr.cinema),
+                            const CinemaList(),
+                            
+                            if (selectedCinemaId != null) ...[
+                              const SizedBox(height: 20),
+                              SectionTitle(title: tr.selectDate),
+                              _buildDateSelection(),
+                              const SizedBox(height: 20),
+                              SectionTitle(title: tr.selectShowtime),
+                              _buildShowtimeList(movie.id),
+                            ],
+                          ] else ...[
+                            const SizedBox(height: 40),
+                            Center(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF1C1C1C),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: const Color(0xFFFCC434).withOpacity(0.3)),
+                                ),
+                                child: Column(
+                                  children: [
+                                    const Icon(Icons.calendar_month, color: Color(0xFFFCC434), size: 48),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      tr.notYetReleased,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      "${tr.comingSoon}: ${movie.releaseDate}",
+                                      style: const TextStyle(color: Colors.grey, fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                          const SizedBox(height: 120),
                         ],
-                        const SizedBox(height: 120),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Positioned(
-              bottom: 20,
-              left: 16,
-              right: 16,
-              child: ContinueButton(
-                onTap: () {
-                  if (selectedCinemaId == null || selectedShowtimeId == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Vui lòng chọn rạp và suất chiếu')),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SeatSelectionScreen(
-                          movieId: movie.id,
-                          showtimeId: selectedShowtimeId,
-                        ),
                       ),
-                    );
-                  }
-                },
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const Positioned(top: 40, left: 16, child: NavigationBack()),
-          ],
-        ),
+              Positioned(
+                bottom: 20,
+                left: 16,
+                right: 16,
+                child: ContinueButton(
+                  text: isReleased ? tr.continueBtn : tr.notYetReleased,
+                  onTap: isReleased 
+                    ? () {
+                        if (selectedCinemaId == null || selectedShowtimeId == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(tr.selectShowtime)),
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SeatSelectionScreen(
+                                movieId: movie.id,
+                                showtimeId: selectedShowtimeId,
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    : null,
+                ),
+              ),
+              const Positioned(top: 40, left: 16, child: NavigationBack()),
+            ],
+          );
+        },
         loading: () => const Center(child: CircularProgressIndicator(color: Colors.amber)),
         error: (err, stack) => Center(child: Text('Lỗi: $err', style: const TextStyle(color: Colors.white))),
       ),
@@ -144,10 +188,11 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
   Widget _buildShowtimeList(int movieId) {
     final showtimesAsync = ref.watch(showtimesListProvider(movieId));
     final selectedId = ref.watch(selectedShowtimeIdProvider);
+    final tr = ref.read(translationsProvider);
 
     return showtimesAsync.when(
       data: (showtimes) {
-        if (showtimes.isEmpty) return const Text("Hết suất chiếu", style: TextStyle(color: Colors.grey));
+        if (showtimes.isEmpty) return Text(tr.noShowtimes, style: const TextStyle(color: Colors.grey));
         return Wrap(
           spacing: 10,
           runSpacing: 10,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../provider/language_provider.dart';
+import '../../../core/localization/language_provider.dart';
 
 class AuthActionButtons extends ConsumerWidget {
   final VoidCallback onSignIn;
@@ -15,7 +15,7 @@ class AuthActionButtons extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final lang = ref.watch(languageProvider);
+    final tr = ref.watch(translationsProvider);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -34,7 +34,7 @@ class AuthActionButtons extends ConsumerWidget {
                 ),
               ),
               child: Text(
-                lang.signIn,
+                tr.signIn,
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
@@ -53,7 +53,7 @@ class AuthActionButtons extends ConsumerWidget {
                 ),
               ),
               child: Text(
-                lang.signUp,
+                tr.signUp,
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),

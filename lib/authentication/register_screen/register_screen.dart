@@ -5,6 +5,7 @@ import '../../../core/widgets/success_dialog.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/auth_button.dart';
 import '../view_model/auth_view_model.dart';
+import '../../../core/localization/language_provider.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -29,6 +30,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   void _listenToAuthState() {
+    final tr = ref.read(translationsProvider);
     ref.listen(authViewModelProvider, (previous, next) {
       if (next.generalError != null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -47,8 +49,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           context: context,
           barrierDismissible: false,
           builder: (context) => SuccessDialog(
-            title: 'Đăng ký thành công!',
-            message: 'Tài khoản của bạn đã được tạo. Vui lòng đăng nhập để tiếp tục.',
+            title: tr.registrationSuccess,
+            message: tr.registrationSuccessDesc,
           ),
         ).then((_) {
           // Khi Dialog đóng (do nhấn nút "Tuyệt vời"), quay lại màn hình Login
@@ -71,6 +73,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     _listenToAuthState();
     final authState = ref.watch(authViewModelProvider);
+    final tr = ref.watch(translationsProvider);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -90,9 +93,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Sign up',
-              style: TextStyle(
+            Text(
+              tr.signUp,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -100,34 +103,34 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             ),
             const SizedBox(height: 40),
             CustomTextField(
-              label: 'Full Name',
+              label: tr.fullName,
               controller: _fullNameController,
               errorText: authState.fullNameError,
             ),
             const SizedBox(height: 24),
             CustomTextField(
-              label: 'Email',
+              label: tr.email,
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               errorText: authState.emailError,
             ),
             const SizedBox(height: 24),
             CustomTextField(
-              label: 'Password',
+              label: tr.password,
               isPassword: true,
               controller: _passwordController,
               errorText: authState.passwordError,
             ),
             const SizedBox(height: 24),
             CustomTextField(
-              label: 'Confirm Password',
+              label: tr.confirmPassword,
               isPassword: true,
               controller: _confirmPasswordController,
               errorText: authState.confirmPasswordError,
             ),
             const SizedBox(height: 40),
             AuthButton(
-              text: 'Sign up',
+              text: tr.signUp,
               isLoading: authState.isLoading,
               onPressed: () {
                 ref.read(authViewModelProvider.notifier).signUp(
@@ -142,15 +145,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  "Already have an account? ",
-                  style: TextStyle(color: Colors.white70),
+                Text(
+                  tr.alreadyHaveAccount,
+                  style: const TextStyle(color: Colors.white70),
                 ),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
-                  child: const Text(
-                    'Sign in',
-                    style: TextStyle(
+                  child: Text(
+                    tr.signIn,
+                    style: const TextStyle(
                       color: AppColors.hexFCC434,
                       fontWeight: FontWeight.bold,
                     ),

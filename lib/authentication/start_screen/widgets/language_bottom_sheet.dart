@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../provider/language_provider.dart';
+import '../../../core/localization/language_provider.dart';
+
 
 class LanguageBottomSheet extends ConsumerStatefulWidget {
   const LanguageBottomSheet({super.key});
@@ -21,6 +22,8 @@ class _LanguageBottomSheetState extends ConsumerState<LanguageBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final tr = ref.watch(translationsProvider);
+
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: const BoxDecoration(
@@ -34,18 +37,18 @@ class _LanguageBottomSheetState extends ConsumerState<LanguageBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Choose language',
-            style: TextStyle(
+          Text(
+            _selectedTemp.chooseLanguage,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Which language do you want to use?',
-            style: TextStyle(color: Colors.white70, fontSize: 14),
+          Text(
+            _selectedTemp.whichLanguage,
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
           ),
           const SizedBox(height: 24),
           _buildLanguageItem(AppLanguage.en),

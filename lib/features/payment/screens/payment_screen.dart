@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 import '../../../authentication/repository/auth_repository.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/localization/language_provider.dart';
 import '../../home/models/Api_service/movie_service.dart';
 import '../../home/models/movie_model.dart';
 import '../../seat_selection/model/firestore_models.dart';
@@ -49,6 +50,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     final movieAsync = ref.watch(movieDetailProvider(widget.movieId));
     final showtimeAsync = ref.watch(firestoreShowtimeFullProvider(widget.showtimeId));
     final seatState = ref.watch(seatSelectionProvider);
+    final tr = ref.watch(translationsProvider);
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: 'VND');
 
     final selectedSeats = seatState.seats
@@ -65,9 +67,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Payment',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: Text(
+          tr.payment,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -94,7 +96,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 const SizedBox(height: 24),
                 const Divider(color: Colors.grey, thickness: 0.5),
                 const SizedBox(height: 16),
-                _buildTotalRow(currencyFormat, seatState.totalAmount),
+                _buildTotalRow(currencyFormat, seatState.totalAmount, tr.total),
                 const SizedBox(height: 24),
                 PaymentMethodSection(
                   selectedMethod: _selectedPaymentMethod,
@@ -104,13 +106,13 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 const SizedBox(height: 24),
                 const PaymentTimer(),
                 const SizedBox(height: 24),
-                _buildContinueButton(movie, showtime, seatState),
+                _buildContinueButton(movie, showtime, seatState, tr),
                 const SizedBox(height: 40),
               ],
             ),
           ),
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, s) => Center(child: Text("Lỗi suất chiếu: $e", style: const TextStyle(color: Colors.red))),
+          error: (e, s) => Center(child: Text("Error: $e", style: const TextStyle(color: Colors.red))),
         ),
         loading: () => const Center(
             child: CircularProgressIndicator(color: AppColors.hexFCC434)),
@@ -120,11 +122,11 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     );
   }
 
-  Widget _buildTotalRow(NumberFormat format, double amount) {
+  Widget _buildTotalRow(NumberFormat format, double amount, String totalLabel) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text('Total', style: TextStyle(color: Colors.white, fontSize: 16)),
+        Text(totalLabel, style: const TextStyle(color: Colors.white, fontSize: 16)),
         Text(
           format.format(amount),
           style: const TextStyle(
@@ -137,7 +139,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     );
   }
 
-  Widget _buildContinueButton(MovieModel movie, ShowtimeFirestoreModel showtime, SeatSelectionState seatState) {
+  Widget _buildContinueButton(MovieModel movie, ShowtimeFirestoreModel showtime, SeatSelectionState seatState, AppLanguage tr) {
     final user = ref.read(authRepositoryProvider).currentUser;
     if (user == null) return const SizedBox.shrink();
 
@@ -151,9 +153,6 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 .toList();
 
           if (selectedSeatLabels.isEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Vui lòng chọn ghế trước khi tiếp tục')),
-            );
             return;
           }
 
@@ -215,7 +214,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Lỗi: $e'),
+                  content: Text('Error: $e'),
                   backgroundColor: Colors.red,
                 ),
               );
@@ -228,8 +227,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         ),
-        child: const Text('Continue',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        child: Text(tr.continueBtn,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
     );
   }

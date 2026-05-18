@@ -14,25 +14,27 @@ class ProfileMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87;
+
     return Column(
       children: [
         ListTile(
           onTap: onTap,
-          leading: Icon(icon, color: Colors.white, size: 28),
+          leading: Icon(icon, color: color, size: 28),
           title: Text(
             title,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: color,
               fontSize: 18,
               fontWeight: FontWeight.w500,
             ),
           ),
-          trailing: const Icon(Icons.chevron_right, color: Colors.white70),
+          trailing: Icon(Icons.chevron_right, color: color.withOpacity(0.7)),
           contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24),
-          child: Divider(color: Colors.white10, height: 1),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Divider(color: color.withOpacity(0.1), height: 1),
         ),
       ],
     );

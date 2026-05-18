@@ -54,7 +54,7 @@ class AuthRepository {
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     } catch (e) {
-      if (e is String) throw e;
+      if (e is String) rethrow;
       throw 'Không thể kết nối với máy chủ Firebase. Hãy kiểm tra cấu hình hoặc internet.';
     }
   }

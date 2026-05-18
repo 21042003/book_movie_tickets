@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/localization/language_provider.dart';
 import '../provider/seat_selection_provider.dart';
 import 'seat_text.dart';
 import 'seat_order.dart';
@@ -23,6 +24,7 @@ class SeatSelectionScreen extends ConsumerWidget {
     // 2. Lấy thông tin suất chiếu để hiển thị Header
     final showtimeAsync = ref.watch(firestoreShowtimeFullProvider(showtimeId));
     final state = ref.watch(seatSelectionProvider);
+    final tr = ref.watch(translationsProvider);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -34,7 +36,7 @@ class SeatSelectionScreen extends ConsumerWidget {
             child: Row(
               children: [
                 IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.pop(context)),
-                const Expanded(child: Center(child: Text("Select seat", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)))),
+                Expanded(child: Center(child: Text(tr.selectSeat, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)))),
                 const SizedBox(width: 48),
               ],
             ),
@@ -72,9 +74,9 @@ class SeatSelectionScreen extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildLegendItem("Available", AppColors.hex1C1C1C),
-                _buildLegendItem("Reserved", AppColors.hex261D08),
-                _buildLegendItem("Selected", AppColors.hexFCC434),
+                _buildLegendItem(tr.available, AppColors.hex1C1C1C),
+                _buildLegendItem(tr.reserved, AppColors.hex261D08),
+                _buildLegendItem(tr.selected, AppColors.hexFCC434),
               ],
             ),
           ),
