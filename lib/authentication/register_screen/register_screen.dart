@@ -21,6 +21,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final TextEditingController _confirmPasswordController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    // Xóa lỗi khi vào màn hình
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(authViewModelProvider.notifier).clearErrors();
+    });
+  }
+
+  @override
   void dispose() {
     _fullNameController.dispose();
     _emailController.dispose();
@@ -150,7 +159,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   style: const TextStyle(color: Colors.white70),
                 ),
                 GestureDetector(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    ref.read(authViewModelProvider.notifier).clearErrors();
+                    Navigator.pop(context);
+                  },
                   child: Text(
                     tr.signIn,
                     style: const TextStyle(

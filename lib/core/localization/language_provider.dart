@@ -112,6 +112,16 @@ extension AppLanguageExtension on AppLanguage {
   String get whichLanguage => this == AppLanguage.vi ? 'Bạn muốn sử dụng ngôn ngữ nào?' : 'Which language do you want to use?';
   String get useButtonText => this == AppLanguage.vi ? 'Sử dụng Tiếng Việt' : 'Use English';
 
+  // Validation
+  String get errEmailEmpty => this == AppLanguage.vi ? 'Vui lòng nhập Email' : 'Please enter Email';
+  String get errEmailInvalid => this == AppLanguage.vi ? 'Email không đúng định dạng' : 'Invalid email format';
+  String get errPasswordEmpty => this == AppLanguage.vi ? 'Vui lòng nhập mật khẩu' : 'Please enter password';
+  String get errPasswordLength => this == AppLanguage.vi ? 'Mật khẩu phải từ 8 - 16 ký tự' : 'Password must be 8 - 16 characters';
+  String get errPasswordComplexity => this == AppLanguage.vi ? 'Mật khẩu phải bao gồm chữ, số và ký tự đặc biệt' : 'Password must include letters, numbers and special characters';
+  String get errFullNameEmpty => this == AppLanguage.vi ? 'Vui lòng nhập đầy đủ họ tên' : 'Please enter full name';
+  String get errConfirmPasswordEmpty => this == AppLanguage.vi ? 'Vui lòng xác nhận mật khẩu' : 'Please confirm password';
+  String get errPasswordNotMatch => this == AppLanguage.vi ? 'Mật khẩu xác nhận không khớp' : 'Confirm password does not match';
+
   String get tmdbLanguage {
     switch (this) {
       case AppLanguage.en: return 'en-US';

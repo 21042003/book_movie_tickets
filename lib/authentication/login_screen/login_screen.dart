@@ -21,6 +21,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    // Xóa lỗi khi vào màn hình
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(authViewModelProvider.notifier).clearErrors();
+    });
+  }
+
+  @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
@@ -98,6 +107,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () {
+                  ref.read(authViewModelProvider.notifier).clearErrors();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const RecoverPasswordScreen()),
@@ -130,6 +140,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
                 GestureDetector(
                   onTap: () {
+                    ref.read(authViewModelProvider.notifier).clearErrors();
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const RegisterScreen()),

@@ -177,14 +177,14 @@ class MyTicketScreen extends StatelessWidget {
               bottom: 140, // Adjust based on bottom part height
               child: Row(
                 children: [
-                  // Container(
-                  //   width: 30,
-                  //   height: 30,
-                  //   decoration: const BoxDecoration(
-                  //     color: Colors.black,
-                  //     shape: BoxShape.circle,
-                  //   ),
-                  // ),
+                  Container(
+                    width: 30,
+                    height: 30,
+                    decoration: const BoxDecoration(
+                      color: Colors.black,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -209,14 +209,14 @@ class MyTicketScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Container(
-                  //   width: 30,
-                  //   height: 30,
-                  //   decoration: const BoxDecoration(
-                  //     color: Colors.black,
-                  //     shape: BoxShape.circle,
-                  //   ),
-                  // ),
+                  Container(
+                    width: 30,
+                    height: 30,
+                    decoration: const BoxDecoration(
+                      color: Colors.black,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                 ],
               ),
             ),

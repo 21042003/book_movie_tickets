@@ -17,6 +17,15 @@ class _RecoverPasswordScreenState extends ConsumerState<RecoverPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    // Xóa lỗi khi vào màn hình
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(authViewModelProvider.notifier).clearErrors();
+    });
+  }
+
+  @override
   void dispose() {
     _emailController.dispose();
     super.dispose();

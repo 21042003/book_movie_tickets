@@ -1,47 +1,49 @@
+import '../localization/language_provider.dart';
+
 class ValidationUtils {
-  static String? validateEmail(String? value) {
+  static String? validateEmail(String? value, AppLanguage tr) {
     if (value == null || value.trim().isEmpty) {
-      return 'Vui lòng nhập Email';
+      return tr.errEmailEmpty;
     }
     final emailRegex = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
     if (!emailRegex.hasMatch(value.trim())) {
-      return 'Email không đúng định dạng';
+      return tr.errEmailInvalid;
     }
     return null;
   }
 
-  static String? validatePassword(String? value) {
+  static String? validatePassword(String? value, AppLanguage tr) {
     if (value == null || value.isEmpty) {
-      return 'Vui lòng nhập mật khẩu';
+      return tr.errPasswordEmpty;
     }
     
     // Kiểm tra độ dài 8-16 ký tự
     if (value.length < 8 || value.length > 16) {
-      return 'Mật khẩu phải từ 8 - 16 ký tự';
+      return tr.errPasswordLength;
     }
 
     // Kiểm tra bao gồm chữ, số và ký tự đặc biệt
     final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$');
     if (!passwordRegex.hasMatch(value)) {
-      return 'Mật khẩu phải bao gồm chữ, số và ký tự đặc biệt';
+      return tr.errPasswordComplexity;
     }
 
     return null;
   }
 
-  static String? validateFullName(String? value) {
+  static String? validateFullName(String? value, AppLanguage tr) {
     if (value == null || value.trim().isEmpty) {
-      return 'Vui lòng nhập đầy đủ họ tên';
+      return tr.errFullNameEmpty;
     }
     return null;
   }
 
-  static String? validateConfirmPassword(String? password, String? confirmPassword) {
+  static String? validateConfirmPassword(String? password, String? confirmPassword, AppLanguage tr) {
     if (confirmPassword == null || confirmPassword.isEmpty) {
-      return 'Vui lòng xác nhận mật khẩu';
+      return tr.errConfirmPasswordEmpty;
     }
     if (password != confirmPassword) {
-      return 'Mật khẩu xác nhận không khớp';
+      return tr.errPasswordNotMatch;
     }
     return null;
   }

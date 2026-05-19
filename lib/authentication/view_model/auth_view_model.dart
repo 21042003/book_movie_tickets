@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/utils/validation_utils.dart';
 import '../repository/auth_repository.dart';
+import '../../core/localization/language_provider.dart';
 
 class AuthState {
   final bool isLoading;
@@ -44,12 +45,14 @@ class AuthState {
 
 class AuthViewModel extends StateNotifier<AuthState> {
   final AuthRepository _authRepository;
+  final Ref ref;
 
-  AuthViewModel(this._authRepository) : super(AuthState());
+  AuthViewModel(this._authRepository, this.ref) : super(AuthState());
 
   void signIn(String email, String password) async {
-    final emailErr = ValidationUtils.validateEmail(email);
-    final passwordErr = ValidationUtils.validatePassword(password);
+    final tr = ref.read(translationsProvider);
+    final emailErr = ValidationUtils.validateEmail(email, tr);
+    final passwordErr = ValidationUtils.validatePassword(password, tr);
 
     if (emailErr != null || passwordErr != null) {
       state = state.copyWith(
@@ -75,10 +78,11 @@ class AuthViewModel extends StateNotifier<AuthState> {
     required String password,
     required String confirmPassword,
   }) async {
-    final nameErr = ValidationUtils.validateFullName(fullName);
-    final emailErr = ValidationUtils.validateEmail(email);
-    final passwordErr = ValidationUtils.validatePassword(password);
-    final confirmErr = ValidationUtils.validateConfirmPassword(password, confirmPassword);
+    final tr = ref.read(translationsProvider);
+    final nameErr = ValidationUtils.validateFullName(fullName, tr);
+    final emailErr = ValidationUtils.validateEmail(email, tr);
+    final passwordErr = ValidationUtils.validatePassword(password, tr);
+    final confirmErr = ValidationUtils.validateConfirmPassword(password, confirmPassword, tr);
 
     if (nameErr != null || emailErr != null || passwordErr != null || confirmErr != null) {
       state = state.copyWith(
@@ -103,7 +107,8 @@ class AuthViewModel extends StateNotifier<AuthState> {
   }
 
   void recoverPassword(String email) async {
-    final emailErr = ValidationUtils.validateEmail(email);
+    final tr = ref.read(translationsProvider);
+    final emailErr = ValidationUtils.validateEmail(email, tr);
 
     if (emailErr != null) {
       state = state.copyWith(emailError: emailErr);
@@ -131,5 +136,5 @@ class AuthViewModel extends StateNotifier<AuthState> {
 }
 
 final authViewModelProvider = StateNotifierProvider<AuthViewModel, AuthState>((ref) {
-  return AuthViewModel(ref.watch(authRepositoryProvider));
+  return AuthViewModel(ref.watch(authRepositoryProvider), ref);
 });
