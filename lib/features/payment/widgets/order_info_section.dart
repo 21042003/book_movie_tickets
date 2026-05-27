@@ -24,11 +24,18 @@ class OrderInfoSection extends StatelessWidget {
   Widget _buildInfoRow(String label, String value) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: const TextStyle(color: Colors.grey, fontSize: 16)),
-        Text(value,
+        const SizedBox(width: 16),
+        Expanded(
+          child: Text(
+            value,
+            textAlign: TextAlign.end,
             style: const TextStyle(
-                color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
       ],
     );
   }

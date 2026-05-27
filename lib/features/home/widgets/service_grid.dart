@@ -21,7 +21,7 @@ class MovieCard extends StatelessWidget {
           child: Wrap(
             spacing: 16,
             children: [
-              Container(
+              SizedBox(
                 width: 310,
                 // height: 440,
                 child: Column(

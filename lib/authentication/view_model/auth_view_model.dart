@@ -6,6 +6,7 @@ import '../../core/localization/language_provider.dart';
 class AuthState {
   final bool isLoading;
   final String? emailError;
+  final String? currentPasswordError;
   final String? passwordError;
   final String? fullNameError;
   final String? confirmPasswordError;
@@ -15,6 +16,7 @@ class AuthState {
   AuthState({
     this.isLoading = false,
     this.emailError,
+    this.currentPasswordError,
     this.passwordError,
     this.fullNameError,
     this.confirmPasswordError,
@@ -25,6 +27,7 @@ class AuthState {
   AuthState copyWith({
     bool? isLoading,
     String? emailError,
+    String? currentPasswordError,
     String? passwordError,
     String? fullNameError,
     String? confirmPasswordError,
@@ -34,6 +37,7 @@ class AuthState {
     return AuthState(
       isLoading: isLoading ?? this.isLoading,
       emailError: emailError,
+      currentPasswordError: currentPasswordError,
       passwordError: passwordError,
       fullNameError: fullNameError,
       confirmPasswordError: confirmPasswordError,
@@ -119,6 +123,41 @@ class AuthViewModel extends StateNotifier<AuthState> {
     
     try {
       await _authRepository.recoverPassword(email);
+      state = state.copyWith(isLoading: false, isSuccess: true);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, generalError: e.toString());
+    }
+  }
+
+  void changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    final tr = ref.read(translationsProvider);
+    final currentErr = currentPassword.isEmpty ? tr.errPasswordEmpty : null;
+    final newErr = ValidationUtils.validatePassword(newPassword, tr);
+    final confirmErr = ValidationUtils.validateConfirmPassword(newPassword, confirmPassword, tr);
+
+    if (currentErr != null || newErr != null || confirmErr != null) {
+      state = state.copyWith(
+        currentPasswordError: currentErr,
+        passwordError: newErr,
+        confirmPasswordError: confirmErr,
+      );
+      return;
+    }
+
+    state = state.copyWith(
+      isLoading: true,
+      currentPasswordError: null,
+      passwordError: null,
+      confirmPasswordError: null,
+      generalError: null,
+    );
+
+    try {
+      await _authRepository.changePassword(currentPassword, newPassword);
       state = state.copyWith(isLoading: false, isSuccess: true);
     } catch (e) {
       state = state.copyWith(isLoading: false, generalError: e.toString());

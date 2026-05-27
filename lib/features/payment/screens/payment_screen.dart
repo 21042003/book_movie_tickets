@@ -19,7 +19,7 @@ import '../widgets/payment_method_section.dart';
 import '../widgets/payment_movie_info.dart';
 import '../widgets/payment_timer.dart';
 
-import 'my_ticket_screen.dart';
+import 'qr_payment_screen.dart';
 import '../models/booking_model.dart';
 
 class PaymentScreen extends ConsumerStatefulWidget {
@@ -202,7 +202,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MyTicketScreen(
+                  builder: (context) => QRPaymentScreen(
                     booking: booking,
                     movie: movie,
                   ),

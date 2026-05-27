@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../authentication/start_screen/start_screen.dart';
+import '../../../authentication/change_password_screen/change_password_screen.dart';
 import '../../../core/widgets/custom_bottom_nav_bar.dart';
 import '../../../core/localization/language_provider.dart';
 import '../../home/screens/home_screen.dart';
@@ -92,7 +93,12 @@ class ProfileScreen extends ConsumerWidget {
                     ProfileMenuItem(
                       icon: Icons.lock_outline,
                       title: tr.changePassword,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
+                        );
+                      },
                     ),
                     ProfileSwitchItem(
                       icon: Icons.face_retouching_natural,

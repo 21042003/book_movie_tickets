@@ -22,7 +22,7 @@ class _LanguageBottomSheetState extends ConsumerState<LanguageBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final tr = ref.watch(translationsProvider);
+    // final tr = ref.watch(translationsProvider);
 
     return Container(
       padding: const EdgeInsets.all(24),

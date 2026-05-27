@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/localization/language_provider.dart';
 import '../../../core/widgets/custom_bottom_nav_bar.dart';
 import '../../payment/screens/ticket_list_screen.dart';
 import '../../profile/screens/profile_screen.dart';
@@ -125,7 +126,7 @@ class _SeeAllMoviesScreenState extends ConsumerState<SeeAllMoviesScreen> {
         crossAxisCount: 2,
         mainAxisSpacing: 20,
         crossAxisSpacing: 16,
-        childAspectRatio: 0.52,
+        childAspectRatio: 0.58,
       ),
       itemCount: state.movies.length + (state.isLoadingMore ? 2 : 0),
       itemBuilder: (context, index) {
@@ -221,13 +222,11 @@ class _MovieGridItem extends ConsumerWidget {
     if (minutes <= 0) return '';
     final hours = minutes ~/ 60;
     final remainingMinutes = minutes % 60;
-    String result = '';
     if (hours > 0) {
-      result = '$hours hour $remainingMinutes minutes';
+      return '$hours h $remainingMinutes m';
     } else {
-      result = '$remainingMinutes minutes';
+      return '$remainingMinutes m';
     }
-    return result;
   }
 
   String _formatDate(String dateStr) {
@@ -244,6 +243,7 @@ class _MovieGridItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedCategory = ref.watch(selectedCategoryProvider);
     final isComingSoon = selectedCategory == MovieCategoryType.comingSoon;
+    final tr = ref.watch(translationsProvider);
 
     return GestureDetector(
       onTap: () {
@@ -264,90 +264,89 @@ class _MovieGridItem extends ConsumerWidget {
                 'https://image.tmdb.org/t/p/w500${movie.posterPath}',
                 fit: BoxFit.cover,
                 width: double.infinity,
-                errorBuilder: (context, error, stackTrace) =>
-                    Container(color: Colors.grey[900]),
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            height: 40,
-            child: Text(
-              movie.title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: AppColors.hexFCC434,
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    color: Colors.grey[900],
+                    alignment: Alignment.center,
+                    child: Text(
+                      tr.loading,
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) => Container(
+                  color: Colors.grey[900],
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.broken_image, color: Colors.white, size: 24),
+                      const SizedBox(height: 4),
+                      Text(
+                        tr.loading, // Hiển thị "Đang tải" khi lỗi theo yêu cầu của bạn
+                        style: const TextStyle(color: Colors.white, fontSize: 10),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
           const SizedBox(height: 8),
-          if (!isComingSoon) ...[
-            SizedBox(
-              height: 20,
-              child: Row(
-                children: [
-                  const Icon(Icons.star, color: AppColors.hexFCC434, size: 14),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${movie.voteAverage} (${movie.voteCount})',
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
-                ],
-              ),
+          Text(
+            movie.title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: AppColors.hexFCC434,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(height: 4),
-            if (_formatRuntime(movie.runtime).isNotEmpty)
-              SizedBox(
-                height: 20,
-                child: Row(
-                  children: [
-                    const Icon(Icons.access_time, color: Colors.grey, size: 14),
-                    const SizedBox(width: 4),
-                    Text(
-                      _formatRuntime(movie.runtime),
-                      style: const TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-          ],
-          if (isComingSoon) ...[
-            SizedBox(
-              height: 20,
-              child: Row(
-                children: [
-                  const Icon(Icons.calendar_month_outlined,
-                      color: Colors.grey, size: 14),
-                  const SizedBox(width: 4),
-                  Text(
-                    _formatDate(movie.releaseDate),
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-          ],
+          ),
           const SizedBox(height: 4),
-          SizedBox(
-            height: 20,
-            child: Row(
-              children: [
-                const Icon(Icons.videocam_outlined, color: Colors.grey, size: 14),
+          Row(
+            children: [
+              if (!isComingSoon) ...[
+                const Icon(Icons.star, color: AppColors.hexFCC434, size: 12),
                 const SizedBox(width: 4),
-                Expanded(
-                  child: Text(
-                    movie.genres.map((g) => g.name).join(', '),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                Text(
+                  '${movie.voteAverage}',
+                  style: const TextStyle(color: Colors.white, fontSize: 11),
+                ),
+                const SizedBox(width: 8),
+                if (movie.runtime > 0) ...[
+                  const Icon(Icons.access_time, color: Colors.grey, size: 12),
+                  const SizedBox(width: 4),
+                  Text(
+                    _formatRuntime(movie.runtime),
+                    style: const TextStyle(color: Colors.grey, fontSize: 11),
                   ),
+                ],
+              ] else ...[
+                const Icon(Icons.calendar_month_outlined, color: Colors.grey, size: 12),
+                const SizedBox(width: 4),
+                Text(
+                  _formatDate(movie.releaseDate),
+                  style: const TextStyle(color: Colors.grey, fontSize: 11),
                 ),
               ],
-            ),
+            ],
+          ),
+          const SizedBox(height: 2),
+          Row(
+            children: [
+              const Icon(Icons.videocam_outlined, color: Colors.grey, size: 12),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  movie.genres.isNotEmpty ? movie.genres[0].name : 'Movie',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.grey, fontSize: 11),
+                ),
+              ),
+            ],
           ),
         ],
       ),

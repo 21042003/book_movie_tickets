@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import '../../features/home/models/Api_service/movie_service.dart';
 import '../../features/home/models/genres_model.dart';
 
@@ -51,15 +52,21 @@ class DataSeeder {
       
       if (allMovies.isEmpty) return;
 
-      print("📦 Đã lấy được ${allMovies.length} phim từ API. Bắt đầu tạo suất chiếu...");
+      if (kDebugMode) {
+        print("📦 Đã lấy được ${allMovies.length} phim từ API. Bắt đầu tạo suất chiếu...");
+      }
 
       for (var movie in allMovies) {
         await createSampleShowtimesForMovie(movie.id, movie.title);
       }
 
-      print("✅ Đã khởi tạo dữ liệu thành công!");
+      if (kDebugMode) {
+        print("✅ Đã khởi tạo dữ liệu thành công!");
+      }
     } catch (e) {
-      print("❌ Lỗi: $e");
+      if (kDebugMode) {
+        print("❌ Lỗi: $e");
+      }
     }
   }
 

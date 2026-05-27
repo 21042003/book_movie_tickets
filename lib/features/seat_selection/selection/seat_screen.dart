@@ -10,7 +10,12 @@ import 'seat_order.dart';
 class SeatSelectionScreen extends ConsumerWidget {
   final int movieId;
   final String showtimeId;
-  const SeatSelectionScreen({super.key, required this.movieId, required this.showtimeId});
+
+  const SeatSelectionScreen({
+    super.key,
+    required this.movieId,
+    required this.showtimeId,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,11 +37,30 @@ class SeatSelectionScreen extends ConsumerWidget {
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.only(top: 20, bottom: 20, left: 16, right: 16),
+            padding: const EdgeInsets.only(
+              top: 20,
+              bottom: 20,
+              left: 16,
+              right: 16,
+            ),
             child: Row(
               children: [
-                IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.pop(context)),
-                Expanded(child: Center(child: Text(tr.selectSeat, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)))),
+                IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      tr.selectSeat,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(width: 48),
               ],
             ),
@@ -48,7 +72,14 @@ class SeatSelectionScreen extends ConsumerWidget {
             width: double.infinity,
             margin: const EdgeInsets.only(top: 10),
             decoration: BoxDecoration(
-              gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [AppColors.hexFCC434.withOpacity(0.4), Colors.transparent]),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.hexFCC434.withOpacity(0.4),
+                  Colors.transparent,
+                ],
+              ),
             ),
             child: CustomPaint(painter: ScreenPainter()),
           ),
@@ -58,11 +89,21 @@ class SeatSelectionScreen extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 12, childAspectRatio: 1, crossAxisSpacing: 4, mainAxisSpacing: 4),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 12,
+                  childAspectRatio: 1,
+                  crossAxisSpacing: 4,
+                  mainAxisSpacing: 4,
+                ),
                 itemCount: state.seats.length,
                 itemBuilder: (context, index) {
                   final seat = state.seats[index];
-                  return SeatWidget(seat: seat, onTap: () => ref.read(seatSelectionProvider.notifier).toggleSeat(seat.label));
+                  return SeatWidget(
+                    seat: seat,
+                    onTap: () => ref
+                        .read(seatSelectionProvider.notifier)
+                        .toggleSeat(seat.label),
+                  );
                 },
               ),
             ),
@@ -86,12 +127,21 @@ class SeatSelectionScreen extends ConsumerWidget {
             data: (st) => Container(
               padding: const EdgeInsets.all(16),
               margin: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(color: AppColors.hex1C1C1C, borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(
+                color: AppColors.hex1C1C1C,
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildInfoItem(Icons.calendar_month, DateFormat('dd MMM').format(st.startTime)),
-                  _buildInfoItem(Icons.access_time, DateFormat('HH:mm').format(st.startTime)),
+                  _buildInfoItem(
+                    Icons.calendar_month,
+                    DateFormat('dd MMM').format(st.startTime),
+                  ),
+                  _buildInfoItem(
+                    Icons.access_time,
+                    DateFormat('HH:mm').format(st.startTime),
+                  ),
                   _buildInfoItem(Icons.room, st.cinemaName),
                 ],
               ),
@@ -99,7 +149,7 @@ class SeatSelectionScreen extends ConsumerWidget {
             loading: () => const SizedBox.shrink(),
             error: (e, s) => const SizedBox.shrink(),
           ),
-          
+
           const SizedBox(height: 20),
           SeatOrderBottomBar(movieId: movieId, showtimeId: showtimeId),
         ],
@@ -108,31 +158,56 @@ class SeatSelectionScreen extends ConsumerWidget {
   }
 
   Widget _buildLegendItem(String label, Color color) {
-    return Row(children: [
-      Container(width: 16, height: 16, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4))),
-      const SizedBox(width: 8),
-      Text(label, style: const TextStyle(color: AppColors.hex8C8C8C, fontSize: 12)),
-    ]);
+    return Row(
+      children: [
+        Container(
+          width: 16,
+          height: 16,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: const TextStyle(color: AppColors.hex8C8C8C, fontSize: 12),
+        ),
+      ],
+    );
   }
 
   Widget _buildInfoItem(IconData icon, String text) {
-    return Row(children: [
-      Icon(icon, color: AppColors.hexFCC434, size: 16),
-      const SizedBox(width: 6),
-      Text(text, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500)),
-    ]);
+    return Row(
+      children: [
+        Icon(icon, color: AppColors.hexFCC434, size: 16),
+        const SizedBox(width: 6),
+        Text(
+          text,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
   }
 }
 
 class ScreenPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = AppColors.hexFCC434..style = PaintingStyle.stroke..strokeWidth = 2;
+    final paint = Paint()
+      ..color = AppColors.hexFCC434
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
     final path = Path();
     path.moveTo(size.width * 0.1, 10);
     path.quadraticBezierTo(size.width / 2, 0, size.width * 0.9, 10);
     canvas.drawPath(path, paint);
   }
+
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

@@ -1,3 +1,5 @@
+import 'package:book_movie_tickets/core/localization/language_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:book_movie_tickets/core/constants/app_icons.dart';
 import 'package:flutter/material.dart';
@@ -5,25 +7,26 @@ import 'package:intl/intl.dart';
 import '../../home/models/movie_model.dart';
 import '../models/booking_model.dart';
 
-class MyTicketScreen extends StatelessWidget {
+class MyTicketScreen extends ConsumerWidget {
   final BookingModel booking;
   final MovieModel movie;
 
   const MyTicketScreen({super.key, required this.booking, required this.movie});
 
-  String _formatRuntime(int minutes) {
+  String _formatRuntime(int minutes, AppLanguage tr) {
     if (minutes <= 0) return 'N/A';
     final hours = minutes ~/ 60;
     final remainingMinutes = minutes % 60;
     if (hours > 0) {
-      return '$hours hours $remainingMinutes minutes';
+      return '$hours ${tr.hourLabel} $remainingMinutes ${tr.minuteLabel}';
     } else {
-      return '$remainingMinutes minutes';
+      return '$remainingMinutes ${tr.minuteLabel}';
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tr = ref.watch(translationsProvider);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -34,9 +37,9 @@ class MyTicketScreen extends StatelessWidget {
           onPressed: () =>
               Navigator.of(context).popUntil((route) => route.isFirst),
         ),
-        title: const Text(
-          'My ticket',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: Text(
+          tr.myTicket,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -86,7 +89,7 @@ class MyTicketScreen extends StatelessWidget {
                                   const SizedBox(height: 12),
                                   _buildIconText(
                                     Icons.access_time,
-                                    _formatRuntime(movie.runtime),
+                                    _formatRuntime(movie.runtime, tr),
                                   ),
                                   const SizedBox(height: 8),
                                   _buildIconText(
@@ -102,17 +105,22 @@ class MyTicketScreen extends StatelessWidget {
                         const Divider(color: Colors.grey, thickness: 0.5),
                         const SizedBox(height: 16),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildInfoColumn(
-                              Icons.calendar_month,
-                              booking.bookingTime,
-                              booking.bookingDate,
+                            Expanded(
+                              child: _buildInfoColumn(
+                                Icons.calendar_month,
+                                booking.bookingTime,
+                                booking.bookingDate,
+                              ),
                             ),
-                            _buildInfoColumn(
-                              Icons.event_seat,
-                              'Section 4',
-                              'Seat ${booking.seats.join(', ')}',
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: _buildInfoColumn(
+                                Icons.event_seat,
+                                tr.section + ' 4',
+                                '${tr.seat} ${booking.seats.join(', ')}',
+                              ),
                             ),
                           ],
                         ),
@@ -135,7 +143,7 @@ class MyTicketScreen extends StatelessWidget {
                         const SizedBox(height: 12),
                         _buildSummaryRow(
                           Icons.info_outline,
-                          'Show this QR code to the ticket counter to receive your ticket',
+                          tr.showQrCode,
                         ),
                       ],
                     ),
@@ -157,7 +165,7 @@ class MyTicketScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Oder ID: ${booking.orderId}',
+                          '${tr.orderId}: ${booking.orderId}',
                           style: const TextStyle(
                             color: Colors.black,
                             fontSize: 14,
@@ -169,7 +177,6 @@ class MyTicketScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             // Notches and Dashed Line
             Positioned(
               left: 0,
@@ -253,22 +260,27 @@ class MyTicketScreen extends StatelessWidget {
           child: Icon(icon, color: Colors.black, size: 24),
         ),
         const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              topText,
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                topText,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            Text(
-              bottomText,
-              style: const TextStyle(color: Colors.grey, fontSize: 13),
-            ),
-          ],
+              Text(
+                bottomText,
+                style: const TextStyle(color: Colors.grey, fontSize: 13),
+              ),
+            ],
+          ),
         ),
       ],
     );

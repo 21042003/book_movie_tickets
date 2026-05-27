@@ -25,6 +25,20 @@ extension AppLanguageExtension on AppLanguage {
   String get password => this == AppLanguage.vi ? 'Mật khẩu' : 'Password';
   String get fullName => this == AppLanguage.vi ? 'Họ và tên' : 'Full Name';
   String get confirmPassword => this == AppLanguage.vi ? 'Xác nhận mật khẩu' : 'Confirm Password';
+  String get loading => this == AppLanguage.vi ? 'Đang tải' : 'Loading';
+  String get imageError => this == AppLanguage.vi ? 'Lỗi tải ảnh' : 'Image error';
+  String get qrPayment => this == AppLanguage.vi ? 'Thanh toán QR' : 'QR Payment';
+  String get scanQrToPay => this == AppLanguage.vi ? 'Quét mã QR để thanh toán' : 'Scan QR code to pay';
+  String get confirmingPayment => this == AppLanguage.vi ? 'Đang xác nhận thanh toán...' : 'Confirming payment...';
+  String get confirmTransfer => this == AppLanguage.vi ? 'Xác nhận đã chuyển khoản' : 'Confirm transfer';
+  String get doNotCloseApp => this == AppLanguage.vi ? 'Vui lòng không thoát ứng dụng khi đang thực hiện giao dịch' : 'Please do not close the app while the transaction is in progress';
+  String get loginToSeeTickets => this == AppLanguage.vi ? 'Vui lòng đăng nhập để xem vé' : 'Please login to see your tickets';
+  String get noTicketsYet => this == AppLanguage.vi ? 'Bạn chưa có vé nào' : 'You don’t have any tickets yet';
+  String get createIndexHint => this == AppLanguage.vi ? 'Vui lòng nhấn vào link trong Console để tạo Index cho Ticket List' : 'Please click the link in Console to create Index for Ticket List';
+  String get errorPrefix => this == AppLanguage.vi ? 'Lỗi' : 'Error';
+  String get cannotLoadMovieInfo => this == AppLanguage.vi ? 'Không thể tải thông tin phim' : 'Cannot load movie information';
+  String get hourLabel => this == AppLanguage.vi ? 'giờ' : 'hours';
+  String get minuteLabel => this == AppLanguage.vi ? 'phút' : 'minutes';
 
   // Bottom Nav
   String get home => this == AppLanguage.vi ? 'Trang chủ' : 'Home';
@@ -77,6 +91,12 @@ extension AppLanguageExtension on AppLanguage {
   String get faceId => this == AppLanguage.vi ? 'Xác thực sinh trắc học' : 'Face ID / Touch ID';
   String get signOut => this == AppLanguage.vi ? 'Đăng xuất' : 'Sign Out';
   String get darkMode => this == AppLanguage.vi ? 'Chế độ tối' : 'Dark Mode';
+
+  // Change Password
+  String get currentPassword => this == AppLanguage.vi ? 'Mật khẩu hiện tại' : 'Current Password';
+  String get newPassword => this == AppLanguage.vi ? 'Mật khẩu mới' : 'New Password';
+  String get changePasswordSuccess => this == AppLanguage.vi ? 'Đổi mật khẩu thành công!' : 'Password changed successfully!';
+  String get changePasswordSuccessDesc => this == AppLanguage.vi ? 'Mật khẩu của bạn đã được cập nhật.' : 'Your password has been updated.';
 
   // Onboarding / Auth
   String get onboardingTitle => this == AppLanguage.vi ? 'Chào mừng đến với MBooking!' : 'MBooking hello!';

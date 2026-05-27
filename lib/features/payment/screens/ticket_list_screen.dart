@@ -1,3 +1,4 @@
+import 'package:book_movie_tickets/core/localization/language_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../authentication/repository/auth_repository.dart';
@@ -36,11 +37,12 @@ class TicketListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final tr = ref.watch(translationsProvider);
     final user = ref.watch(authRepositoryProvider).currentUser;
     if (user == null) {
-      return const Scaffold(
+      return Scaffold(
         backgroundColor: Colors.black,
-        body: Center(child: Text("Vui lòng đăng nhập để xem vé", style: TextStyle(color: Colors.white))),
+        body: Center(child: Text(tr.loginToSeeTickets, style: const TextStyle(color: Colors.white))),
       );
     }
     
@@ -52,9 +54,9 @@ class TicketListScreen extends ConsumerWidget {
         backgroundColor: Colors.black,
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: const Text(
-          'My ticket',
-          style: TextStyle(
+        title: Text(
+          tr.myTicket,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -65,15 +67,15 @@ class TicketListScreen extends ConsumerWidget {
       body: bookingsAsync.when(
         data: (bookings) {
           if (bookings.isEmpty) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.confirmation_num_outlined, color: Colors.grey, size: 64),
-                  SizedBox(height: 16),
+                  const Icon(Icons.confirmation_num_outlined, color: Colors.grey, size: 64),
+                  const SizedBox(height: 16),
                   Text(
-                    "Bạn chưa có vé nào",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    tr.noTicketsYet,
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ],
               ),
@@ -92,19 +94,19 @@ class TicketListScreen extends ConsumerWidget {
         ),
         error: (err, stack) {
           if (err.toString().contains('failed-precondition')) {
-            return const Center(
+            return Center(
               child: Padding(
-                padding: EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Text(
-                  "Vui lòng nhấn vào link trong Console để tạo Index cho Ticket List",
+                  tr.createIndexHint,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.orange),
+                  style: const TextStyle(color: Colors.orange),
                 ),
               ),
             );
           }
           return Center(
-            child: Text("Lỗi: $err", style: const TextStyle(color: Colors.red)),
+            child: Text("${tr.errorPrefix}: $err", style: const TextStyle(color: Colors.red)),
           );
         },
       ),
@@ -122,6 +124,7 @@ class _TicketCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final tr = ref.watch(translationsProvider);
     return GestureDetector(
       onTap: () async {
         showDialog(
@@ -150,7 +153,7 @@ class _TicketCard extends ConsumerWidget {
           if (context.mounted) {
             Navigator.pop(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Không thể tải thông tin phim: $e")),
+              SnackBar(content: Text("${tr.cannotLoadMovieInfo}: $e")),
             );
           }
         }
@@ -203,9 +206,12 @@ class _TicketCard extends ConsumerWidget {
                       children: [
                         const Icon(Icons.access_time, color: Colors.grey, size: 16),
                         const SizedBox(width: 8),
-                        Text(
-                          '${booking.bookingTime} • ${booking.bookingDate}',
-                          style: const TextStyle(color: Colors.grey, fontSize: 14),
+                        Expanded(
+                          child: Text(
+                            '${booking.bookingTime} • ${booking.bookingDate}',
+                            style: const TextStyle(color: Colors.grey, fontSize: 14),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),

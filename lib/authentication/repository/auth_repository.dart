@@ -67,6 +67,27 @@ class AuthRepository {
     }
   }
 
+  Future<void> changePassword(String currentPassword, String newPassword) async {
+    final user = _auth.currentUser;
+    if (user == null) throw 'Người dùng chưa đăng nhập';
+
+    try {
+      // Xác thực lại trước khi đổi mật khẩu
+      final credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: currentPassword,
+      );
+      await user.reauthenticateWithCredential(credential);
+      
+      // Đổi mật khẩu mới
+      await user.updatePassword(newPassword);
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    } catch (e) {
+      throw 'Đã có lỗi xảy ra: $e';
+    }
+  }
+
   Future<void> signOut() async {
     await _auth.signOut();
   }
@@ -85,6 +106,8 @@ class AuthRepository {
         return 'Mật khẩu quá yếu';
       case 'network-request-failed':
         return 'Lỗi kết nối mạng';
+      case 'requires-recent-login':
+        return 'Vui lòng đăng nhập lại trước khi thực hiện thao tác này';
       default:
         return e.message ?? 'Đã có lỗi xảy ra, vui lòng thử lại';
     }
