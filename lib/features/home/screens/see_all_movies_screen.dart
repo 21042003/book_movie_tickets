@@ -90,6 +90,7 @@ class _SeeAllMoviesScreenState extends ConsumerState<SeeAllMoviesScreen> {
   }
 
   Widget _buildBody(MovieListState state) {
+    final tr = ref.watch(translationsProvider);
     if (state.isLoading && state.movies.isEmpty) {
       return const Center(
         child: CircularProgressIndicator(color: AppColors.hexFCC434),
@@ -104,7 +105,7 @@ class _SeeAllMoviesScreenState extends ConsumerState<SeeAllMoviesScreen> {
             const Icon(Icons.error_outline, color: Colors.red, size: 48),
             const SizedBox(height: 16),
             Text(
-              'Lỗi: ${state.error}',
+              '${tr.errorPrefix}: ${state.error}',
               textAlign: TextAlign.center,
               style: const TextStyle(color: Colors.white),
             ),
@@ -112,7 +113,7 @@ class _SeeAllMoviesScreenState extends ConsumerState<SeeAllMoviesScreen> {
             ElevatedButton(
               onPressed: () => ref.read(movieListNotifierProvider.notifier).fetchMovies(isRefresh: true),
               style: ElevatedButton.styleFrom(backgroundColor: AppColors.hexFCC434),
-              child: const Text('Thử lại', style: TextStyle(color: Colors.black)),
+              child: Text(tr.tryAgain, style: const TextStyle(color: Colors.black)),
             )
           ],
         ),
@@ -151,6 +152,7 @@ class _CustomTabBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedCategory = ref.watch(selectedCategoryProvider);
+    final tr = ref.watch(translationsProvider);
 
     return Container(
       height: 45,
@@ -161,13 +163,13 @@ class _CustomTabBar extends ConsumerWidget {
       child: Row(
         children: [
           _TabItem(
-            title: 'Now playing',
+            title: tr.nowPlaying,
             isSelected: selectedCategory == MovieCategoryType.nowPlaying,
             onTap: () => ref.read(selectedCategoryProvider.notifier).state =
                 MovieCategoryType.nowPlaying,
           ),
           _TabItem(
-            title: 'Coming soon',
+            title: tr.comingSoon,
             isSelected: selectedCategory == MovieCategoryType.comingSoon,
             onTap: () => ref.read(selectedCategoryProvider.notifier).state =
                 MovieCategoryType.comingSoon,

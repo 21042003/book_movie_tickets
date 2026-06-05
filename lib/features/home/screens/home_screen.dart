@@ -5,6 +5,7 @@ import '../../../authentication/repository/auth_repository.dart';
 import '../../../core/widgets/custom_bottom_nav_bar.dart';
 import '../../../core/widgets/see_all_click.dart';
 import '../../../core/localization/language_provider.dart';
+import '../../../core/constants/app_spacing.dart';
 import '../../payment/screens/ticket_list_screen.dart';
 import '../../profile/screens/profile_screen.dart';
 import '../controllers/see_all_movies_controller.dart';
@@ -75,7 +76,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               },
               onChanged: (value) {},
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: AppSpacing.s16),
             SeeAllClick(
               title: tr.nowPlaying,
               onTap: () {
@@ -89,9 +90,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 );
               },
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: AppSpacing.s16),
             const MovieCard(),
-            const SizedBox(height: 24.0),
+            const SizedBox(height: AppSpacing.s24),
             SeeAllClick(
               title: tr.comingSoon,
               onTap: () {
@@ -105,11 +106,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 );
               },
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: AppSpacing.s16),
             const ComingSoonList(),
-            const SizedBox(height: 24.0),
+            const SizedBox(height: AppSpacing.s24),
             SeeAllClick(title: tr.promoDiscount, onTap: () {}),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.s20),
           ],
         ),
       ),
@@ -120,3 +121,4 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 }
+

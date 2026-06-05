@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../constants/app_colors.dart';
+import '../localization/language_provider.dart';
 
-class SuccessDialog extends StatelessWidget {
+class SuccessDialog extends ConsumerWidget {
   final String title;
   final String message;
 
@@ -20,7 +22,9 @@ class SuccessDialog extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tr = ref.watch(translationsProvider);
+
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
@@ -81,9 +85,9 @@ class SuccessDialog extends StatelessWidget {
                     borderRadius: BorderRadius.circular(25),
                   ),
                 ),
-                child: const Text(
-                  'Tuyệt vời',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                child: Text(
+                  tr.great,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
             ),
@@ -93,3 +97,4 @@ class SuccessDialog extends StatelessWidget {
     );
   }
 }
+

@@ -23,7 +23,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 2, // Incremented version to trigger onUpgrade
+      version: 3, // Incremented version to 3
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -32,6 +32,12 @@ class DatabaseHelper {
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       await _createMoviesTables(db);
+    }
+    if (oldVersion < 3) {
+      // Add new columns to bookings table
+      await db.execute('ALTER TABLE bookings ADD COLUMN discountAmount REAL DEFAULT 0.0');
+      await db.execute('ALTER TABLE bookings ADD COLUMN voucherCode TEXT');
+      await db.execute('ALTER TABLE bookings ADD COLUMN showtimeId TEXT');
     }
   }
 
@@ -47,6 +53,7 @@ CREATE TABLE bookings (
   localId $idType,
   id TEXT,
   userId $textType,
+  showtimeId TEXT,
   movieId $integerType,
   movieTitle $textType,
   moviePoster $textType,
@@ -56,6 +63,8 @@ CREATE TABLE bookings (
   bookingTime $textType,
   seats $textType,
   totalAmount $realType,
+  discountAmount REAL DEFAULT 0.0,
+  voucherCode TEXT,
   paymentMethod $textType,
   orderId $textType,
   createdAt $textType,

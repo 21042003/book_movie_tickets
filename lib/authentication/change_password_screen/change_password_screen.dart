@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/success_dialog.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/auth_button.dart';

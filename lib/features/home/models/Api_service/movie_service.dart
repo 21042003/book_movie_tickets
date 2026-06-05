@@ -2,17 +2,15 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import '../../../../core/localization/language_provider.dart';
+import '../../../../core/constants/api_constants.dart';
 import '../genres_model.dart';
 import '../movie_model.dart';
 
 class MovieService {
-  final String _apiKey = '1bbfbf7cb6f93cb26ae1c3e1adfb93ec';
-  final String _baseUrl = 'https://api.themoviedb.org/3';
-
-  ///API lay the loai phim
+  /// Lấy danh sách thể loại phim
   Future<Map<int, GenresModel>> fetchGenreMap({String language = 'vi-VN'}) async {
     final response = await http.get(
-      Uri.parse('$_baseUrl/genre/movie/list?api_key=$_apiKey&language=$language'),
+      Uri.parse('${ApiConstants.genreListUrl()}?api_key=${ApiConstants.tmdbApiKey}&language=$language'),
     );
 
     if (response.statusCode == 200) {
@@ -22,16 +20,15 @@ class MovieService {
     throw Exception('Failed to load genres');
   }
 
-  /// Tối ưu: Lấy danh sách phim mà KHÔNG gọi fetchMovieDetail cho từng phim
+  /// Lấy danh sách phim theo phân loại (now_playing, upcoming, ...)
   Future<List<MovieModel>> fetchMovies(
     String type,
     Map<int, GenresModel> genreMap, {
     int page = 1,
     String language = 'vi-VN',
   }) async {
-    // Thêm region=VN để lấy lịch chiếu chuẩn tại Việt Nam
     final response = await http.get(
-      Uri.parse('$_baseUrl/movie/$type?api_key=$_apiKey&language=$language&page=$page&region=VN'),
+      Uri.parse('${ApiConstants.movieUrl(type)}?api_key=${ApiConstants.tmdbApiKey}&language=$language&page=$page&region=VN'),
     );
 
     if (response.statusCode == 200) {
@@ -51,9 +48,10 @@ class MovieService {
     throw Exception('Failed to load movies');
   }
 
+  /// Lấy chi tiết phim
   Future<MovieModel> fetchMovieDetail(int movieId, {String language = 'vi-VN'}) async {
     final url = Uri.parse(
-      'https://api.themoviedb.org/3/movie/$movieId?api_key=$_apiKey&language=$language',
+      '${ApiConstants.tmdbBaseUrl}/movie/$movieId?api_key=${ApiConstants.tmdbApiKey}&language=$language',
     );
 
     final response = await http.get(url);
@@ -66,11 +64,12 @@ class MovieService {
     }
   }
 
+  /// Tìm kiếm phim
   Future<List<MovieModel>> searchMovies(String query, Map<int, GenresModel> genreMap, {String language = 'vi-VN'}) async {
     if (query.isEmpty) return [];
     
     final url = Uri.parse(
-      '$_baseUrl/search/movie?api_key=$_apiKey&language=$language&query=${Uri.encodeComponent(query)}',
+      '${ApiConstants.searchMovieUrl()}?api_key=${ApiConstants.tmdbApiKey}&language=$language&query=${Uri.encodeComponent(query)}',
     );
 
     final response = await http.get(url);
@@ -91,8 +90,9 @@ class MovieService {
     throw Exception('Failed to search movies');
   }
 
+  /// Lấy trailer phim từ YouTube
   Future<String?> fetchMovieTrailer(int movieId) async {
-    final url = Uri.parse('$_baseUrl/movie/$movieId/videos?api_key=$_apiKey');
+    final url = Uri.parse('${ApiConstants.movieVideoUrl(movieId)}?api_key=${ApiConstants.tmdbApiKey}');
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final List results = json.decode(response.body)['results'];
@@ -105,6 +105,7 @@ class MovieService {
     return null;
   }
 }
+
 
 final movieServiceProvider = Provider((ref) => MovieService());
 

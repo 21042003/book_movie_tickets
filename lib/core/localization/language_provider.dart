@@ -31,6 +31,10 @@ extension AppLanguageExtension on AppLanguage {
   String get scanQrToPay => this == AppLanguage.vi ? 'Quét mã QR để thanh toán' : 'Scan QR code to pay';
   String get confirmingPayment => this == AppLanguage.vi ? 'Đang xác nhận thanh toán...' : 'Confirming payment...';
   String get confirmTransfer => this == AppLanguage.vi ? 'Xác nhận đã chuyển khoản' : 'Confirm transfer';
+  String get cancelPayment => this == AppLanguage.vi ? 'Hủy thanh toán' : 'Cancel Payment';
+  String get confirmCancelPayment => this == AppLanguage.vi ? 'Bạn có chắc chắn muốn hủy thanh toán không?' : 'Are you sure you want to cancel the payment?';
+  String get no => this == AppLanguage.vi ? 'Không' : 'No';
+  String get yes => this == AppLanguage.vi ? 'Có' : 'Yes';
   String get doNotCloseApp => this == AppLanguage.vi ? 'Vui lòng không thoát ứng dụng khi đang thực hiện giao dịch' : 'Please do not close the app while the transaction is in progress';
   String get loginToSeeTickets => this == AppLanguage.vi ? 'Vui lòng đăng nhập để xem vé' : 'Please login to see your tickets';
   String get noTicketsYet => this == AppLanguage.vi ? 'Bạn chưa có vé nào' : 'You don’t have any tickets yet';
@@ -39,6 +43,8 @@ extension AppLanguageExtension on AppLanguage {
   String get cannotLoadMovieInfo => this == AppLanguage.vi ? 'Không thể tải thông tin phim' : 'Cannot load movie information';
   String get hourLabel => this == AppLanguage.vi ? 'giờ' : 'hours';
   String get minuteLabel => this == AppLanguage.vi ? 'phút' : 'minutes';
+  String get tryAgain => this == AppLanguage.vi ? 'Thử lại' : 'Try again';
+  String get great => this == AppLanguage.vi ? 'Tuyệt vời' : 'Great';
 
   // Bottom Nav
   String get home => this == AppLanguage.vi ? 'Trang chủ' : 'Home';
@@ -78,6 +84,7 @@ extension AppLanguageExtension on AppLanguage {
   String get apply => this == AppLanguage.vi ? 'Áp dụng' : 'Apply';
   String get paymentMethod => this == AppLanguage.vi ? 'Phương thức thanh toán' : 'Payment Method';
   String get completePaymentIn => this == AppLanguage.vi ? 'Hoàn tất thanh toán trong' : 'Complete your payment in';
+  String get internationalPayments => this == AppLanguage.vi ? 'Thanh toán quốc tế' : 'International payments';
 
   // My Ticket
   String get myTicket => this == AppLanguage.vi ? 'Vé của tôi' : 'My ticket';
@@ -142,6 +149,8 @@ extension AppLanguageExtension on AppLanguage {
   String get errConfirmPasswordEmpty => this == AppLanguage.vi ? 'Vui lòng xác nhận mật khẩu' : 'Please confirm password';
   String get errPasswordNotMatch => this == AppLanguage.vi ? 'Mật khẩu xác nhận không khớp' : 'Confirm password does not match';
 
+  String get paymentSuccess => this == AppLanguage.vi ? 'Thanh toán thành công!' : 'Payment Successful!';
+  String get paymentSuccessDesc => this == AppLanguage.vi ? 'Vé của bạn đã được xác nhận. Chúc bạn xem phim vui vẻ!' : 'Your ticket has been confirmed. Enjoy your movie!';
   String get tmdbLanguage {
     switch (this) {
       case AppLanguage.en: return 'en-US';

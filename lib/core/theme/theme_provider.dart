@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../constants/app_colors.dart';
+import '../constants/app_text_styles.dart';
 
 final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.dark);
 
@@ -19,7 +20,7 @@ class AppTheme {
         backgroundColor: Colors.black,
         elevation: 0,
       ),
-      fontFamily: 'Montserrat',
+      fontFamily: AppTextStyles.fontFamily,
       useMaterial3: true,
     );
   }
@@ -40,8 +41,9 @@ class AppTheme {
         iconTheme: IconThemeData(color: Colors.black),
         titleTextStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
       ),
-      fontFamily: 'Montserrat',
+      fontFamily: AppTextStyles.fontFamily,
       useMaterial3: true,
     );
   }
 }
+

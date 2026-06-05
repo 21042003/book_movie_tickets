@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/localization/language_provider.dart';
 
-class OrderInfoSection extends StatelessWidget {
+class OrderInfoSection extends ConsumerWidget {
   final String orderId;
   final String selectedSeats;
 
@@ -11,12 +13,14 @@ class OrderInfoSection extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tr = ref.watch(translationsProvider);
+
     return Column(
       children: [
-        _buildInfoRow('Oder ID', orderId),
+        _buildInfoRow(tr.orderId, orderId),
         const SizedBox(height: 12),
-        _buildInfoRow('Seat', selectedSeats),
+        _buildInfoRow(tr.seat, selectedSeats),
       ],
     );
   }
@@ -40,3 +44,4 @@ class OrderInfoSection extends StatelessWidget {
     );
   }
 }
+

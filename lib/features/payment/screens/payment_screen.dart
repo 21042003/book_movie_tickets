@@ -18,6 +18,7 @@ import '../widgets/order_info_section.dart';
 import '../widgets/payment_method_section.dart';
 import '../widgets/payment_movie_info.dart';
 import '../widgets/payment_timer.dart';
+import '../provider/payment_provider.dart';
 
 import 'qr_payment_screen.dart';
 import '../models/booking_model.dart';
@@ -50,8 +51,11 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     final movieAsync = ref.watch(movieDetailProvider(widget.movieId));
     final showtimeAsync = ref.watch(firestoreShowtimeFullProvider(widget.showtimeId));
     final seatState = ref.watch(seatSelectionProvider);
+    final paymentState = ref.watch(paymentProvider);
     final tr = ref.watch(translationsProvider);
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: 'VND');
+
+    final finalAmount = max(0.0, seatState.totalAmount - paymentState.discountAmount);
 
     final selectedSeats = seatState.seats
         .where((seat) => seat.status == SeatStatus.selected)
@@ -92,11 +96,19 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                   selectedSeats: selectedSeats,
                 ),
                 const SizedBox(height: 24),
-                const DiscountSection(),
+                DiscountSection(currentTotal: seatState.totalAmount),
                 const SizedBox(height: 24),
                 const Divider(color: Colors.grey, thickness: 0.5),
                 const SizedBox(height: 16),
                 _buildTotalRow(currencyFormat, seatState.totalAmount, tr.total),
+                if (paymentState.discountAmount > 0) ...[
+                  const SizedBox(height: 8),
+                  _buildTotalRow(currencyFormat, -paymentState.discountAmount, "Giảm giá", isDiscount: true),
+                  const SizedBox(height: 8),
+                  const Divider(color: Colors.grey, thickness: 0.5),
+                  const SizedBox(height: 8),
+                  _buildTotalRow(currencyFormat, finalAmount, "Thành tiền"),
+                ],
                 const SizedBox(height: 24),
                 PaymentMethodSection(
                   selectedMethod: _selectedPaymentMethod,
@@ -122,16 +134,16 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     );
   }
 
-  Widget _buildTotalRow(NumberFormat format, double amount, String totalLabel) {
+  Widget _buildTotalRow(NumberFormat format, double amount, String totalLabel, {bool isDiscount = false}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(totalLabel, style: const TextStyle(color: Colors.white, fontSize: 16)),
         Text(
           format.format(amount),
-          style: const TextStyle(
-            color: AppColors.hexFCC434,
-            fontSize: 22,
+          style: TextStyle(
+            color: isDiscount ? Colors.redAccent : AppColors.hexFCC434,
+            fontSize: isDiscount ? 18 : 22,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -141,6 +153,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
 
   Widget _buildContinueButton(MovieModel movie, ShowtimeFirestoreModel showtime, SeatSelectionState seatState, AppLanguage tr) {
     final user = ref.read(authRepositoryProvider).currentUser;
+    final paymentState = ref.read(paymentProvider);
+    final finalAmount = max(0.0, seatState.totalAmount - paymentState.discountAmount);
+
     if (user == null) return const SizedBox.shrink();
 
     return SizedBox(
@@ -169,7 +184,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
               showtimeId: widget.showtimeId,
               seatLabels: selectedSeatLabels,
               userId: user.uid, 
-              totalAmount: seatState.totalAmount,
+              totalAmount: finalAmount, // Sử dụng finalAmount sau giảm giá
               movieTitle: movie.title,
               moviePoster: movie.posterPath,
               cinemaName: showtime.cinemaName,
@@ -185,6 +200,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
 
               final booking = BookingModel(
                 userId: user.uid,
+                showtimeId: widget.showtimeId,
                 movieId: movie.id,
                 movieTitle: movie.title,
                 moviePoster: movie.posterPath,
@@ -193,7 +209,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 bookingDate: DateFormat('dd.MM.yyyy').format(showtime.startTime),
                 bookingTime: DateFormat('HH:mm').format(showtime.startTime),
                 seats: selectedSeatLabels,
-                totalAmount: seatState.totalAmount,
+                totalAmount: finalAmount,
+                discountAmount: paymentState.discountAmount,
+                voucherCode: paymentState.voucherCode,
                 paymentMethod: _selectedPaymentMethod,
                 orderId: _orderId,
                 createdAt: DateTime.now(),

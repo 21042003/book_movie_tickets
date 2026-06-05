@@ -1,16 +1,18 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/localization/language_provider.dart';
 
-class PaymentTimer extends StatefulWidget {
+class PaymentTimer extends ConsumerStatefulWidget {
   final int initialSeconds;
   const PaymentTimer({super.key, this.initialSeconds = 900});
 
   @override
-  State<PaymentTimer> createState() => _PaymentTimerState();
+  ConsumerState<PaymentTimer> createState() => _PaymentTimerState();
 }
 
-class _PaymentTimerState extends State<PaymentTimer> {
+class _PaymentTimerState extends ConsumerState<PaymentTimer> {
   late Timer _timer;
   late int _secondsRemaining;
 
@@ -49,6 +51,8 @@ class _PaymentTimerState extends State<PaymentTimer> {
 
   @override
   Widget build(BuildContext context) {
+    final tr = ref.watch(translationsProvider);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -58,7 +62,7 @@ class _PaymentTimerState extends State<PaymentTimer> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text('Complete your payment in', style: TextStyle(color: Colors.white)),
+          Text(tr.completePaymentIn, style: const TextStyle(color: Colors.white)),
           Text(
             _formatTime(_secondsRemaining),
             style: const TextStyle(color: AppColors.hexFCC434, fontWeight: FontWeight.bold),
@@ -68,3 +72,4 @@ class _PaymentTimerState extends State<PaymentTimer> {
     );
   }
 }
+

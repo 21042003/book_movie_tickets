@@ -77,6 +77,43 @@ class ShowtimeRepository {
     });
   }
 
+  // 2.5 CANCEL BOOKING: Giải phóng ghế và xóa booking
+  Future<void> cancelBooking({
+    required String showtimeId,
+    required String orderId,
+    required List<String> seatLabels,
+  }) async {
+    final showtimeRef = _firestore.collection('showtimes').doc(showtimeId);
+    
+    // Tìm và xóa booking có orderId tương ứng
+    final bookingQuery = await _firestore
+        .collection('bookings')
+        .where('orderId', isEqualTo: orderId)
+        .get();
+
+    return _firestore.runTransaction((transaction) async {
+      final snapshot = await transaction.get(showtimeRef);
+      if (!snapshot.exists) return;
+
+      final data = snapshot.data()!;
+      final seatMap = Map<String, int>.from(data['seatMap'] ?? {});
+
+      // Chuyển trạng thái các ghế quay lại Trống (0)
+      for (var label in seatLabels) {
+        if (seatMap[label] == 2) {
+          seatMap[label] = 0;
+        }
+      }
+
+      transaction.update(showtimeRef, {'seatMap': seatMap});
+
+      // Xóa các document booking tìm thấy
+      for (var doc in bookingQuery.docs) {
+        transaction.delete(doc.reference);
+      }
+    });
+  }
+
   // 3. OVERLAP CHECK: Kiểm tra trùng lịch khi thêm suất chiếu mới
   Future<bool> checkOverlap({
     required String roomId,

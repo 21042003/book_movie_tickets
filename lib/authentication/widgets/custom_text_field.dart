@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../core/constants/app_colors.dart';
 
 class CustomTextField extends StatefulWidget {
@@ -7,6 +8,7 @@ class CustomTextField extends StatefulWidget {
   final TextEditingController? controller;
   final TextInputType keyboardType;
   final String? errorText;
+  final bool autoTrim;
 
   const CustomTextField({
     super.key,
@@ -15,6 +17,7 @@ class CustomTextField extends StatefulWidget {
     this.controller,
     this.keyboardType = TextInputType.text,
     this.errorText,
+    this.autoTrim = true,
   });
 
   @override
@@ -39,6 +42,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
           obscureText: widget.isPassword ? _obscureText : false,
           keyboardType: widget.keyboardType,
           style: const TextStyle(color: Colors.white),
+          inputFormatters: [
+            // Nếu là email, chặn hoàn toàn dấu cách
+            if (widget.keyboardType == TextInputType.emailAddress)
+              FilteringTextInputFormatter.deny(RegExp(r'\s')),
+          ],
+          onChanged: (value) {
+            // Có thể thực hiện trim ở đây nếu muốn "tự động" hoàn toàn
+            // Nhưng tốt nhất nên trim ở ViewModel để tránh lỗi nhảy con trỏ
+          },
           decoration: InputDecoration(
             filled: true,
             fillColor: AppColors.hex1C1C1C,

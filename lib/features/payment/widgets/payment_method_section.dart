@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_image.dart';
+import '../../../core/localization/language_provider.dart';
 
-class PaymentMethodSection extends StatelessWidget {
+class PaymentMethodSection extends ConsumerWidget {
   final String selectedMethod;
   final Function(String) onMethodSelected;
 
@@ -13,13 +15,15 @@ class PaymentMethodSection extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tr = ref.watch(translationsProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Payment Method',
-          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+        Text(
+          tr.paymentMethod,
+          style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         _buildPaymentMethodItem('Zalo Pay', AppImage.zalopay),
@@ -27,7 +31,7 @@ class PaymentMethodSection extends StatelessWidget {
         _buildPaymentMethodItem('Shopee Pay', AppImage.shopee),
         _buildPaymentMethodItem('ATM Card', AppImage.atm),
         _buildPaymentMethodItem(
-          'International payments',
+          tr.internationalPayments,
           AppImage.visa,
           subtitle: '(Visa, Master, JCB, Amex)',
         ),
@@ -84,3 +88,4 @@ class PaymentMethodSection extends StatelessWidget {
     );
   }
 }
+

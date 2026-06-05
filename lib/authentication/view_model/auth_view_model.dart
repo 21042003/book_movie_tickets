@@ -55,7 +55,10 @@ class AuthViewModel extends StateNotifier<AuthState> {
 
   void signIn(String email, String password) async {
     final tr = ref.read(translationsProvider);
-    final emailErr = ValidationUtils.validateEmail(email, tr);
+    final trimmedEmail = email.trim();
+    // Thường không trim password vì khoảng trắng có thể là một phần của pass
+    
+    final emailErr = ValidationUtils.validateEmail(trimmedEmail, tr);
     final passwordErr = ValidationUtils.validatePassword(password, tr);
 
     if (emailErr != null || passwordErr != null) {
@@ -69,7 +72,7 @@ class AuthViewModel extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true, emailError: null, passwordError: null, generalError: null);
     
     try {
-      await _authRepository.signIn(email, password);
+      await _authRepository.signIn(trimmedEmail, password);
       state = state.copyWith(isLoading: false, isSuccess: true);
     } catch (e) {
       state = state.copyWith(isLoading: false, generalError: e.toString());
@@ -83,8 +86,11 @@ class AuthViewModel extends StateNotifier<AuthState> {
     required String confirmPassword,
   }) async {
     final tr = ref.read(translationsProvider);
-    final nameErr = ValidationUtils.validateFullName(fullName, tr);
-    final emailErr = ValidationUtils.validateEmail(email, tr);
+    final trimmedFullName = fullName.trim();
+    final trimmedEmail = email.trim();
+
+    final nameErr = ValidationUtils.validateFullName(trimmedFullName, tr);
+    final emailErr = ValidationUtils.validateEmail(trimmedEmail, tr);
     final passwordErr = ValidationUtils.validatePassword(password, tr);
     final confirmErr = ValidationUtils.validateConfirmPassword(password, confirmPassword, tr);
 
@@ -101,7 +107,7 @@ class AuthViewModel extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true, fullNameError: null, emailError: null, passwordError: null, confirmPasswordError: null, generalError: null);
     
     try {
-      await _authRepository.signUp(email, password, fullName);
+      await _authRepository.signUp(trimmedEmail, password, trimmedFullName);
       // Đăng xuất ngay lập tức để không bị tự động nhảy vào HomeScreen
       await _authRepository.signOut();
       state = state.copyWith(isLoading: false, isSuccess: true);
@@ -112,7 +118,8 @@ class AuthViewModel extends StateNotifier<AuthState> {
 
   void recoverPassword(String email) async {
     final tr = ref.read(translationsProvider);
-    final emailErr = ValidationUtils.validateEmail(email, tr);
+    final trimmedEmail = email.trim();
+    final emailErr = ValidationUtils.validateEmail(trimmedEmail, tr);
 
     if (emailErr != null) {
       state = state.copyWith(emailError: emailErr);
@@ -122,7 +129,7 @@ class AuthViewModel extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true, emailError: null, generalError: null);
     
     try {
-      await _authRepository.recoverPassword(email);
+      await _authRepository.recoverPassword(trimmedEmail);
       state = state.copyWith(isLoading: false, isSuccess: true);
     } catch (e) {
       state = state.copyWith(isLoading: false, generalError: e.toString());

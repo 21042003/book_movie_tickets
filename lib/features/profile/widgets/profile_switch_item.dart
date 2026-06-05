@@ -32,7 +32,7 @@ class ProfileSwitchItem extends StatelessWidget {
       trailing: Switch(
         value: value,
         onChanged: onChanged,
-        activeColor: AppColors.hexFCC434,
+        activeThumbColor: AppColors.hexFCC434,
         activeTrackColor: AppColors.hexFCC434.withOpacity(0.3),
         inactiveThumbColor: Colors.grey,
       ),

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class BookingModel {
   final String? id; // Firebase document ID
   final String userId;
+  final String showtimeId; // Thêm showtimeId
   final int movieId;
   final String movieTitle;
   final String moviePoster;
@@ -12,6 +13,8 @@ class BookingModel {
   final String bookingTime;
   final List<String> seats;
   final double totalAmount;
+  final double discountAmount; // Thêm discountAmount
+  final String? voucherCode; // Thêm voucherCode
   final String paymentMethod;
   final String orderId;
   final DateTime createdAt;
@@ -20,6 +23,7 @@ class BookingModel {
   BookingModel({
     this.id,
     required this.userId,
+    required this.showtimeId,
     required this.movieId,
     required this.movieTitle,
     required this.moviePoster,
@@ -29,6 +33,8 @@ class BookingModel {
     required this.bookingTime,
     required this.seats,
     required this.totalAmount,
+    this.discountAmount = 0.0,
+    this.voucherCode,
     required this.paymentMethod,
     required this.orderId,
     required this.createdAt,
@@ -38,6 +44,7 @@ class BookingModel {
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
+      'showtimeId': showtimeId,
       'movieId': movieId,
       'movieTitle': movieTitle,
       'moviePoster': moviePoster,
@@ -47,6 +54,8 @@ class BookingModel {
       'bookingTime': bookingTime,
       'seats': seats,
       'totalAmount': totalAmount,
+      'discountAmount': discountAmount,
+      'voucherCode': voucherCode,
       'paymentMethod': paymentMethod,
       'orderId': orderId,
       'createdAt': Timestamp.fromDate(createdAt),
@@ -64,6 +73,7 @@ class BookingModel {
     return BookingModel(
       id: id,
       userId: map['userId'] ?? '',
+      showtimeId: map['showtimeId'] ?? '',
       movieId: map['movieId'] ?? 0,
       movieTitle: map['movieTitle'] ?? '',
       moviePoster: map['moviePoster'] ?? '',
@@ -73,6 +83,8 @@ class BookingModel {
       bookingTime: map['bookingTime'] ?? '',
       seats: List<String>.from(map['seats'] ?? []),
       totalAmount: (map['totalAmount'] ?? 0).toDouble(),
+      discountAmount: (map['discountAmount'] ?? 0).toDouble(),
+      voucherCode: map['voucherCode'],
       paymentMethod: map['paymentMethod'] ?? '',
       orderId: map['orderId'] ?? '',
       createdAt: parseDate(map['createdAt']),
