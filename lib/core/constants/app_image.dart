@@ -5,4 +5,5 @@ class AppImage{
   static const shopee = 'assets/images/shopee.png';
   static const visa = 'assets/images/visa.png';
   static const zalopay = 'assets/images/zalopay.png';
+  static const logo = 'assets/icons/Booking.png';
 }

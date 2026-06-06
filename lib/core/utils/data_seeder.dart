@@ -12,12 +12,12 @@ class DataSeeder {
     final existingShowtimes = await firestore.collection('showtimes').limit(1).get();
     
     if (existingCinemas.docs.isNotEmpty && existingShowtimes.docs.isNotEmpty) {
-      print("ℹ️ Dữ liệu đã tồn tại. Bỏ qua bước khởi tạo.");
+      print("Dữ liệu đã tồn tại. Bỏ qua bước khởi tạo.");
       return;
     }
 
     final movieService = MovieService();
-    print("🚀 Đang khởi tạo dữ liệu mẫu từ API thực tế...");
+    print("Đang khởi tạo dữ liệu mẫu từ API thực tế...");
 
     // 1. Tạo dữ liệu Rạp (Cinemas)
     final cinemas = [

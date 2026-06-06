@@ -27,7 +27,6 @@ class ValidationUtils {
     if (!passwordRegex.hasMatch(value)) {
       return tr.errPasswordComplexity;
     }
-
     return null;
   }
 

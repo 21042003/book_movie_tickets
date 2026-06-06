@@ -60,14 +60,11 @@ class PaymentMethodSection extends ConsumerWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Center(
-                child: Text(
-                  name.split(' ')[0],
-                  style: const TextStyle(
-                      color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+              child: ClipRRect(
+                child: Image.asset(
+                  iconPath
+                )
+              )
             ),
             const SizedBox(width: 16),
             Expanded(
