@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import 'core/utils/data_seeder.dart';
 import 'firebase_options.dart';
 import 'my_app.dart';
-import 'core/utils/data_seeder.dart'; // Thêm import
 
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,14 +22,10 @@ Future<void> main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  
-  // BƯỚC KHỞI TẠO DỮ LIỆU:
-  // 1. Nếu bạn vừa xóa 'showtimes' trên Firebase, hãy đảm bảo dòng dưới đây KHÔNG bị comment.
-  // 2. Chạy app (Hot Restart), đợi log "✅ Đã khởi tạo dữ liệu thành công!".
-  // 3. Sau khi dữ liệu đã lên Firebase, hãy comment lại dòng này để tối ưu tốc độ khởi động.
-  await DataSeeder.seedInitialData();
 
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  //await DataSeeder.seedInitialData();
+
+  //FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   runApp(const ProviderScope(child:MyApp()));
 }
 

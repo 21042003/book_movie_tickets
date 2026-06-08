@@ -15,6 +15,8 @@ import '../widgets/movie_card.dart';
 import '../widgets/search_bar_widget.dart';
 import 'search_screen.dart';
 
+/// [HomeScreen] sử dụng [ConsumerStatefulWidget] để kết hợp Lifecycle của Flutter
+/// và khả năng lắng nghe State từ các Provider của Riverpod.
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -23,37 +25,56 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  // Quản lý nội dung trong thanh tìm kiếm.
   final TextEditingController _controller = TextEditingController();
 
+  @override
+  void dispose() {
+    // Giải phóng bộ nhớ của controller khi widget bị hủy. 
+    // Đây là bước quan trọng để tránh Memory Leak (Rò rỉ bộ nhớ).
+    _controller.dispose();
+    super.dispose();
+  }
+
+  /// Hàm xử lý khi người dùng nhấn vào các mục ở thanh điều hướng phía dưới.
+  /// Sử dụng [Navigator.pushReplacement] để thay thế màn hình hiện tại, 
+  /// giúp Stack Navigation không bị quá tải bộ nhớ.
   void _onItemTapped(int index) {
-    if (index == 0) return;
-    if (index == 1) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const TicketListScreen()),
-      );
-    } else if (index == 2) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const SeeAllMoviesScreen()),
-      );
-    } else if (index == 3) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const ProfileScreen()),
-      );
+    if (index == 0) return; // Nếu đang ở Home thì không làm gì.
+
+    Widget nextScreen;
+    switch (index) {
+      case 1:
+        nextScreen = const TicketListScreen();
+        break;
+      case 2:
+        nextScreen = const SeeAllMoviesScreen();
+        break;
+      case 3:
+        nextScreen = const ProfileScreen();
+        break;
+      default:
+        return;
     }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => nextScreen),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    // ref.watch(translationsProvider) giúp tự động cập nhật ngôn ngữ khi User thay đổi cài đặt.
     final tr = ref.watch(translationsProvider);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: ListView(
+          // Sử dụng ListView để toàn bộ trang có thể cuộn được, tránh lỗi pixel overflow trên màn hình nhỏ.
           children: [
+            // Header hiển thị tên User và vị trí.
             HomeHeader(
               userName: ref.watch(authRepositoryProvider).currentUser?.displayName ?? "User",
               location: "HaNoi, VietNam",
@@ -65,6 +86,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               },
               onNotificationTap: () {},
             ),
+
+            // Thanh tìm kiếm ở trang Home đóng vai trò là nút chuyển sang trang SearchScreen.
             SearchBarWidget(
               controller: _controller,
               readOnly: true,
@@ -76,7 +99,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               },
               onChanged: (value) {},
             ),
+
             const SizedBox(height: AppSpacing.s16),
+
+            // Section: Phim đang chiếu
             SeeAllClick(
               title: tr.nowPlaying,
               onTap: () {
@@ -92,7 +118,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             const SizedBox(height: AppSpacing.s16),
             const MovieCard(),
+
             const SizedBox(height: AppSpacing.s24),
+
+            // Section: Phim sắp chiếu
             SeeAllClick(
               title: tr.comingSoon,
               onTap: () {
@@ -108,7 +137,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             const SizedBox(height: AppSpacing.s16),
             const ComingSoonList(),
+
             const SizedBox(height: AppSpacing.s24),
+
+            // Section: Khuyến mãi
             SeeAllClick(title: tr.promoDiscount, onTap: () {}),
             const SizedBox(height: AppSpacing.s20),
           ],
@@ -121,4 +153,3 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 }
-
